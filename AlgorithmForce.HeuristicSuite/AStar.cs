@@ -4,7 +4,7 @@ using System.Linq;
 namespace AlgorithmForce.HeuristicSuite
 {
     public class AStar<TStep>
-        where TStep : struct, IStep
+        where TStep : IStep<TStep>
     {
         #region Fields
 
@@ -23,29 +23,29 @@ namespace AlgorithmForce.HeuristicSuite
 
         #region Constructor
 
-        public AStar()
+        internal AStar()
             : this(Comparer<TStep>.Default, EqualityComparer<TStep>.Default)
         {
         }
 
-        public AStar(IEqualityComparer<TStep> ec)
+        internal AStar(IEqualityComparer<TStep> ec)
             : this(Comparer<TStep>.Default, ec)
         {
         }
 
-        public AStar(IComparer<TStep> c)
+        internal AStar(IComparer<TStep> c)
             : this(c, EqualityComparer<TStep>.Default)
         {
         }
 
-        public AStar(IComparer<TStep> c, IEqualityComparer<TStep> ec)
+        internal AStar(IComparer<TStep> c, IEqualityComparer<TStep> ec)
         {
-            this._c = c == null ? Comparer<TStep>.Default : c;
-            this._ec = ec == null ? EqualityComparer<TStep>.Default : ec;
+            this._c = c;
+            this._ec = ec;
         }
 
         #endregion
-
+        
         #region Methods
 
         public IList<TStep> Execute(TStep startAt, TStep goal)
@@ -65,18 +65,20 @@ namespace AlgorithmForce.HeuristicSuite
                 if (this._ec.Equals(current, goal))
                     return solutions;
 
-                foreach (var next in current.GetNextSteps<TStep>())
+                foreach (var next in current.GetNextSteps())
                 {
-                    if (!next.IsValidStep) continue;
+                    if (next == null || !next.IsValidStep) continue;
                     if (closed.Contains(next)) continue;
 
                     solutions.Add(next);
 
                     var prior = open.FirstOrDefault(s => this._ec.Equals(s, next));
-                                              // better score
-                    if (!prior.IsValidStep || this._c.Compare(next, prior) < 0) 
+                    //                                         next has better score
+                    if (prior == null || !prior.IsValidStep || this._c.Compare(next, prior) < 0)
                     {
-                        if (prior.IsValidStep) open.Remove(prior);
+                        if (prior == null || !prior.IsValidStep)
+                            open.Remove(prior);
+
                         open.Add(next);
                     }
                 }
