@@ -3,10 +3,12 @@ using System.Collections.Generic;
 
 namespace AlgorithmForce.HeuristicSuite
 {
-    public interface IStep<out TStep>
+    public interface IStep<TKey, TStep> 
     {
+        TKey Key { get; }
+
         bool IsValidStep { get; }
 
-        IEnumerable<TStep> GetNextSteps();
+        IStep<TKey, TStep> PreviousStep { get; set; }
     }
 }

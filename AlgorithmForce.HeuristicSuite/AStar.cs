@@ -1,90 +1,117 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AlgorithmForce.HeuristicSuite
 {
-    public class AStar<TStep>
-        where TStep : IStep<TStep>
+    public class AStar<TKey, TStep>
+        where TStep : IStep<TKey, TStep>
     {
         #region Fields
 
-        private readonly IComparer<TStep> _c; 
-        private readonly IEqualityComparer<TStep> _ec;
+        public static readonly Func<TStep, bool> DefaultStepValidityChecker = step => step.IsValidStep;
+
+        private readonly IComparer<TKey> _c;
+        private readonly IEqualityComparer<TKey> _ec;
+        private readonly Func<TStep, IEnumerable<TStep>> _nextStepsFactory;
+
+        private Func<TStep, bool> _stepValidityChecker = DefaultStepValidityChecker;
 
         #endregion
 
         #region Properties
 
-        public IComparer<TStep> Comparer { get { return this._c; } }
+        public IComparer<TKey> Comparer
+        {
+            get { return this._c; }
+        }
 
-        public IEqualityComparer<TStep> EqualityComparer { get { return this._ec; } }
+        public IEqualityComparer<TKey> EqualityComparer
+        {
+            get { return this._ec; }
+        }
+
+        public Func<TStep, IEnumerable<TStep>> NextStepsFactory
+        {
+            get { return this._nextStepsFactory; }
+        }
+
+        public Func<TStep, bool> StepValidityChecker // This is optional
+        {
+            get { return this._stepValidityChecker; }
+            set { this._stepValidityChecker = value == null ? DefaultStepValidityChecker : value; }
+        }
 
         #endregion
 
         #region Constructor
 
-        internal AStar()
-            : this(Comparer<TStep>.Default, EqualityComparer<TStep>.Default)
+        internal AStar(Func<TStep, IEnumerable<TStep>> nextStepsFactory)
+            : this(nextStepsFactory, Comparer<TKey>.Default, EqualityComparer<TKey>.Default)
         {
         }
 
-        internal AStar(IEqualityComparer<TStep> ec)
-            : this(Comparer<TStep>.Default, ec)
+        internal AStar(Func<TStep, IEnumerable<TStep>> nextStepsFactory, IEqualityComparer<TKey> ec)
+            : this(nextStepsFactory, Comparer<TKey>.Default, ec)
         {
         }
 
-        internal AStar(IComparer<TStep> c)
-            : this(c, EqualityComparer<TStep>.Default)
+        internal AStar(Func<TStep, IEnumerable<TStep>> nextStepsFactory, IComparer<TKey> c)
+            : this(nextStepsFactory, c, EqualityComparer<TKey>.Default)
         {
         }
 
-        internal AStar(IComparer<TStep> c, IEqualityComparer<TStep> ec)
+        internal AStar(Func<TStep, IEnumerable<TStep>> nextStepsFactory, IComparer<TKey> c, IEqualityComparer<TKey> ec)
         {
+            this._nextStepsFactory = nextStepsFactory;
             this._c = c;
             this._ec = ec;
         }
 
         #endregion
-        
+
         #region Methods
 
-        public IList<TStep> Execute(TStep startAt, TStep goal)
+        public TStep Execute(TStep startAt, TStep goal)
         {
-            var solutions = new List<TStep>();
-            var open = new SortedSet<TStep>(this._c);
-            var closed = new HashSet<TStep>(this._ec);
-            
-            open.Add(goal);
+            var open = new SortedList<TKey, TStep>(this._c);
+            var closed = new StepCollection<TKey, TStep>(this._ec);
+
+            open.Add(goal.Key, goal);
 
             while (open.Count > 0)
             {
-                var current = open.Min;
+                var current = open.First().Value;
 
                 closed.Add(current);
 
-                if (this._ec.Equals(current, goal))
-                    return solutions;
+                if (this._ec.Equals(current.Key, goal.Key))
+                    return current;
 
-                foreach (var next in current.GetNextSteps())
+                foreach (var next in this._nextStepsFactory(current))
                 {
-                    if (next == null || !next.IsValidStep) continue;
+                    if (!IsValidStep(next)) continue;
                     if (closed.Contains(next)) continue;
 
-                    solutions.Add(next);
+                    next.PreviousStep = current;
 
-                    var prior = open.FirstOrDefault(s => this._ec.Equals(s, next));
-                    //                                         next has better score
-                    if (prior == null || !prior.IsValidStep || this._c.Compare(next, prior) < 0)
+                    var prior = default(TStep);
+                    //                                            next has better score
+                    if (!open.TryGetValue(next.Key, out prior) || this._c.Compare(next.Key, prior.Key) < 0)
                     {
-                        if (prior == null || !prior.IsValidStep)
-                            open.Remove(prior);
+                        if (prior != null)
+                            open.Remove(prior.Key);
 
-                        open.Add(next);
+                        open.Add(next.Key, next);
                     }
                 }
             }
+            return default(TStep); // no solution
+        }
 
-            return solutions;
+        public bool IsValidStep(TStep step)
+        {
+            return step != null && this._stepValidityChecker(step);
         }
 
         #endregion

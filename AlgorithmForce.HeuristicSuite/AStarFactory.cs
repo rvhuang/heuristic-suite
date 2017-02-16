@@ -5,35 +5,43 @@ namespace AlgorithmForce.HeuristicSuite
 {
     public static class AStarFactory
     {
-        public static AStar<TStep> Create<TStep>()
-            where TStep : IStep<TStep>, IEquatable<TStep>, IComparable<TStep>
+        public static AStar<TKey, TStep> Create<TKey, TStep>(Func<TStep, IEnumerable<TStep>> nextStepsFactory)
+            where TKey : IEquatable<TKey>, IComparable<TKey>
+            where TStep : IStep<TKey, TStep>
         {
-            return new AStar<TStep>();
+            if (nextStepsFactory == null) throw new ArgumentNullException("nextStepsFactory");
+
+            return new AStar<TKey, TStep>(nextStepsFactory);
         }
 
-        public static AStar<TStep> Create<TStep>(IEqualityComparer<TStep> ec)
-            where TStep : IStep<TStep>, IComparable<TStep>
+        public static AStar<TKey, TStep> Create<TKey, TStep>(Func<TStep, IEnumerable<TStep>> nextStepsFactory, IEqualityComparer<TKey> ec)
+            where TKey : IComparable<TKey>
+            where TStep : IStep<TKey, TStep>
         {
+            if (nextStepsFactory == null) throw new ArgumentNullException("nextStepsFactory");
             if (ec == null) throw new ArgumentNullException("ec");
 
-            return new AStar<TStep>(ec);
+            return new AStar<TKey, TStep>(nextStepsFactory, ec);
         }
 
-        public static AStar<TStep> Create<TStep>(IComparer<TStep> c)
-            where TStep : IStep<TStep>, IEquatable<TStep>
+        public static AStar<TKey, TStep> Create<TKey, TStep>(Func<TStep, IEnumerable<TStep>> nextStepsFactory, IComparer<TKey> c)
+            where TKey : IEquatable<TKey>
+            where TStep : IStep<TKey, TStep>
         {
+            if (nextStepsFactory == null) throw new ArgumentNullException("nextStepsFactory");
             if (c == null) throw new ArgumentNullException("c");
 
-            return new AStar<TStep>(c);
+            return new AStar<TKey, TStep>(nextStepsFactory, c);
         }
 
-        public static AStar<TStep> Create<TStep>(IComparer<TStep> c, IEqualityComparer<TStep> ec)
-            where TStep : IStep<TStep>
+        public static AStar<TKey, TStep> Create<TKey, TStep>(Func<TStep, IEnumerable<TStep>> nextStepsFactory, IComparer<TKey> c, IEqualityComparer<TKey> ec)
+            where TStep : IStep<TKey, TStep>
         {
+            if (nextStepsFactory == null) throw new ArgumentNullException("nextStepsFactory");
             if (c == null) throw new ArgumentNullException("c");
             if (ec == null) throw new ArgumentNullException("ec");
 
-            return new AStar<TStep>(c, ec);
+            return new AStar<TKey, TStep>(nextStepsFactory, c, ec);
         }
     }
 }
