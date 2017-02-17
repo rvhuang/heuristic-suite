@@ -33,6 +33,11 @@ namespace AlgorithmForce.Example.PathFinding
             get { return this.pos; }
         }
 
+        int IStep<Point2DInt64, Step>.Depth
+        {
+            get; set;
+        }
+
         IStep<Point2DInt64, Step> IStep<Point2DInt64, Step>.PreviousStep
         {
             get; set;

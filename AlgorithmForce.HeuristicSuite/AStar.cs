@@ -78,13 +78,17 @@ namespace AlgorithmForce.HeuristicSuite
             if (this._nextStepsFactory == null)
                 throw new InvalidOperationException("Property NextStepFactory is null.");
 
-            var open = new SortedList<TKey, TStep>(this._c);
+            var sc = new StepComparer<TKey, TStep>(this._c, StepComparerMode.DepthFirst);
+            var open = new List<TStep>();
+            
+            // var open = new SortedSet<TStep>(new StepComparer<TKey, TStep>(this._c, StepComparerMode.DepthFirst));
             var closed = new Dictionary<TKey, TStep>(this._ec);
 
-            open.Add(startAt.Key, startAt);
+            open.Add(startAt);
 
             while (open.Count > 0)
             {
+                open.Sort(sc);
 #if DEBUG
                 Debug.WriteLine("Open:");
                 Debug.WriteLine(string.Join(Environment.NewLine, open));
@@ -92,9 +96,11 @@ namespace AlgorithmForce.HeuristicSuite
                 Debug.WriteLine(string.Join(Environment.NewLine, closed));
                 Debug.WriteLine("-------");
 #endif
-                var current = open.First().Value;
+                var current = open.First();
 
-                open.Remove(current.Key);
+                // open.Remove(current);
+
+                open.RemoveAt(0);
                 closed.Add(current.Key, current);
 
                 if (this._ec.Equals(current.Key, goal.Key))
@@ -102,18 +108,14 @@ namespace AlgorithmForce.HeuristicSuite
 
                 foreach (var next in this._nextStepsFactory(current))
                 {
-                    if (!IsValidStep(next)) continue;
                     if (closed.ContainsKey(next.Key)) continue;
-
-                    next.PreviousStep = current;
-
-                    var prior = default(TStep);
-                    //                                            score is updated and better than prior.
-                    if (!open.TryGetValue(next.Key, out prior) || this._c.Compare(next.Key, prior.Key) < 0)
+                    if (!IsValidStep(next)) continue;
+                    if (!open.Any(s => this._ec.Equals(next.Key, s.Key)))
                     {
-                        if (prior != null)
-                            open.Remove(prior.Key);
-                        open.Add(next.Key, next);
+                        next.PreviousStep = current;
+                        next.Depth = current.Depth + 1;
+                        
+                        open.Add(next);
                     }
                 }
             }

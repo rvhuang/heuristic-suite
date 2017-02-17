@@ -7,6 +7,7 @@ namespace AlgorithmForce.HeuristicSuite
     {
         internal static readonly IEqualityComparer<long> Int64EqualityComparer = EqualityComparer<long>.Default;
         internal static readonly IComparer<long> Int64Comparer = Comparer<long>.Default;
+        internal static readonly IComparer<int> Int32Comparer = Comparer<int>.Default;
 
         public static long GetManhattanDistance(long x1, long y1, long x2, long y2)
         {
