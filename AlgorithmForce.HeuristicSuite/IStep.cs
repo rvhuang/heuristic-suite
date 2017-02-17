@@ -19,7 +19,7 @@ namespace AlgorithmForce.HeuristicSuite
     {
         private readonly IComparer<TKey> _keyComparer;
         private readonly StepComparerMode _mode;
-        private readonly Func<IStep<TKey, TStep>, IStep<TKey, TStep>, int> _comparison;
+        private readonly Comparison<TStep> _comparison;
 
         public StepComparer(IComparer<TKey> keyComparer, StepComparerMode mode)
         {
@@ -42,25 +42,45 @@ namespace AlgorithmForce.HeuristicSuite
         {
             return this._comparison(x, y);
         }
-        
-        private int KeyFirstComparison(IStep<TKey, TStep> x, IStep<TKey, TStep> y)
+
+        private int KeyFirstComparison(TStep x, TStep y)
         {
             var keyComparing = _keyComparer.Compare(x.Key, y.Key); // H(x)
+            var depthComparing = DistanceHelper.Int32Comparer.Compare(x.Depth, y.Depth); // G(x)
+
+            if (keyComparing < 0 && depthComparing < 0)
+                return -1;
+
+            if (keyComparing > 0 && depthComparing > 0)
+                return 1;
+
+            if (keyComparing == 0 && depthComparing == 0)
+                return 0;
 
             if (keyComparing != 0)
                 return keyComparing;
             else
-                return DistanceHelper.Int32Comparer.Compare(x.Depth, y.Depth);   // G(x)
+                return depthComparing;
         }
 
-        private int DepthFirstComparison(IStep<TKey, TStep> x, IStep<TKey, TStep> y)
+        private int DepthFirstComparison(TStep x, TStep y)
         {
+            var keyComparing = _keyComparer.Compare(x.Key, y.Key); // H(x)
             var depthComparing = DistanceHelper.Int32Comparer.Compare(x.Depth, y.Depth); // G(x)
+
+            if (keyComparing < 0 && depthComparing < 0)
+                return -1;
+
+            if (keyComparing > 0 && depthComparing > 0)
+                return 1;
+
+            if (keyComparing == 0 && depthComparing == 0)
+                return 0;
 
             if (depthComparing != 0)
                 return depthComparing;
             else
-                return _keyComparer.Compare(x.Key, y.Key);   // H(x) 
+                return keyComparing;
         }
     }
 

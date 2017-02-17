@@ -12,7 +12,7 @@ namespace AlgorithmForce.Example.PathFinding
         {
             var max = new Point2DInt64(20, 20);
             var startAt = new Point2DInt64(5, 0);
-            var goal = new Point2DInt64(11, 18);
+            var goal = new Point2DInt64(10, 18);
             var obstacles = new HashSet<Point2DInt64>();
 
             #region Map Data
@@ -35,6 +35,10 @@ namespace AlgorithmForce.Example.PathFinding
             obstacles.Add(new Point2DInt64(11, 13));
             obstacles.Add(new Point2DInt64(11, 14));
             obstacles.Add(new Point2DInt64(11, 15));
+            obstacles.Add(new Point2DInt64(12, 15));
+            obstacles.Add(new Point2DInt64(13, 15));
+            obstacles.Add(new Point2DInt64(14, 15));
+            obstacles.Add(new Point2DInt64(15, 15));
 
             #endregion
 
@@ -52,15 +56,15 @@ namespace AlgorithmForce.Example.PathFinding
                     var point = new Point2DInt64(x, y);
 
                     if (obstacles.Contains(point))
-                        Console.Write("_X");
+                        Console.Write(" X");
                     else if (point.Equals(startAt))
-                        Console.Write("_V");
+                        Console.Write(" V");
                     else if (point.Equals(goal))
-                        Console.Write("_V");
+                        Console.Write(" V");
                     else if (result.Any(step => step.Key.Equals(point)))
-                        Console.Write("_O");
+                        Console.Write(" O");
                     else
-                        Console.Write("__");
+                        Console.Write("--");
                 }
                 Console.WriteLine();
             }

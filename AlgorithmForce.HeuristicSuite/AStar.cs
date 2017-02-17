@@ -75,30 +75,31 @@ namespace AlgorithmForce.HeuristicSuite
 
         public TStep Execute(TStep startAt, TStep goal)
         {
+            if (startAt == null)
+                throw new ArgumentNullException("startAt");
+
+            if (goal == null)
+                throw new ArgumentNullException("goal");
+
             if (this._nextStepsFactory == null)
                 throw new InvalidOperationException("Property NextStepFactory is null.");
 
             var sc = new StepComparer<TKey, TStep>(this._c, StepComparerMode.DepthFirst);
             var open = new List<TStep>();
-            
-            // var open = new SortedSet<TStep>(new StepComparer<TKey, TStep>(this._c, StepComparerMode.DepthFirst));
             var closed = new Dictionary<TKey, TStep>(this._ec);
 
             open.Add(startAt);
 
             while (open.Count > 0)
             {
-                open.Sort(sc);
 #if DEBUG
                 Debug.WriteLine("Open:");
                 Debug.WriteLine(string.Join(Environment.NewLine, open));
                 Debug.WriteLine("Closed:");
-                Debug.WriteLine(string.Join(Environment.NewLine, closed));
+                Debug.WriteLine(string.Join(Environment.NewLine, closed.Values));
                 Debug.WriteLine("-------");
 #endif
                 var current = open.First();
-
-                // open.Remove(current);
 
                 open.RemoveAt(0);
                 closed.Add(current.Key, current);
@@ -110,7 +111,7 @@ namespace AlgorithmForce.HeuristicSuite
                 {
                     if (closed.ContainsKey(next.Key)) continue;
                     if (!IsValidStep(next)) continue;
-                    if (!open.Any(s => this._ec.Equals(next.Key, s.Key)))
+                    if (!open.Any(step => this._ec.Equals(next.Key, step.Key)))
                     {
                         next.PreviousStep = current;
                         next.Depth = current.Depth + 1;
@@ -118,6 +119,7 @@ namespace AlgorithmForce.HeuristicSuite
                         open.Add(next);
                     }
                 }
+                open.Sort(sc);
             }
             return default(TStep); // no solution
         }

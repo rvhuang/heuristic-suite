@@ -66,11 +66,11 @@ namespace AlgorithmForce.Example.PathFinding
                 new Step(new Point2DInt64(this.pos.X + this.step, this.pos.Y), this.max, this.step),
                 new Step(new Point2DInt64(this.pos.X, this.pos.Y - this.step), this.max, this.step),
                 new Step(new Point2DInt64(this.pos.X, this.pos.Y + this.step), this.max, this.step),
-
+                /*
                 new Step(new Point2DInt64(this.pos.X + this.step, this.pos.Y + this.step), this.max, this.step),
                 new Step(new Point2DInt64(this.pos.X - this.step, this.pos.Y - this.step), this.max, this.step),
                 new Step(new Point2DInt64(this.pos.X + this.step, this.pos.Y - this.step), this.max, this.step),
-                new Step(new Point2DInt64(this.pos.X - this.step, this.pos.Y + this.step), this.max, this.step)
+                new Step(new Point2DInt64(this.pos.X - this.step, this.pos.Y + this.step), this.max, this.step) */
             };
         }
 
