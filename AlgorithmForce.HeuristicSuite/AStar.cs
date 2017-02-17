@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace AlgorithmForce.HeuristicSuite
@@ -13,8 +14,8 @@ namespace AlgorithmForce.HeuristicSuite
 
         private readonly IComparer<TKey> _c;
         private readonly IEqualityComparer<TKey> _ec;
-        private readonly Func<TStep, IEnumerable<TStep>> _nextStepsFactory;
 
+        private Func<TStep, IEnumerable<TStep>> _nextStepsFactory;
         private Func<TStep, bool> _stepValidityChecker = DefaultStepValidityChecker;
 
         #endregion
@@ -34,6 +35,7 @@ namespace AlgorithmForce.HeuristicSuite
         public Func<TStep, IEnumerable<TStep>> NextStepsFactory
         {
             get { return this._nextStepsFactory; }
+            set { this._nextStepsFactory = value; }
         }
 
         public Func<TStep, bool> StepValidityChecker // This is optional
@@ -46,24 +48,23 @@ namespace AlgorithmForce.HeuristicSuite
 
         #region Constructor
 
-        internal AStar(Func<TStep, IEnumerable<TStep>> nextStepsFactory)
-            : this(nextStepsFactory, Comparer<TKey>.Default, EqualityComparer<TKey>.Default)
+        internal AStar()
+            : this(Comparer<TKey>.Default, EqualityComparer<TKey>.Default)
         {
         }
 
-        internal AStar(Func<TStep, IEnumerable<TStep>> nextStepsFactory, IEqualityComparer<TKey> ec)
-            : this(nextStepsFactory, Comparer<TKey>.Default, ec)
+        internal AStar(IEqualityComparer<TKey> ec)
+            : this(Comparer<TKey>.Default, ec)
         {
         }
 
-        internal AStar(Func<TStep, IEnumerable<TStep>> nextStepsFactory, IComparer<TKey> c)
-            : this(nextStepsFactory, c, EqualityComparer<TKey>.Default)
+        internal AStar(IComparer<TKey> c)
+            : this(c, EqualityComparer<TKey>.Default)
         {
         }
 
-        internal AStar(Func<TStep, IEnumerable<TStep>> nextStepsFactory, IComparer<TKey> c, IEqualityComparer<TKey> ec)
+        internal AStar(IComparer<TKey> c, IEqualityComparer<TKey> ec)
         {
-            this._nextStepsFactory = nextStepsFactory;
             this._c = c;
             this._ec = ec;
         }
@@ -74,16 +75,27 @@ namespace AlgorithmForce.HeuristicSuite
 
         public TStep Execute(TStep startAt, TStep goal)
         {
-            var open = new SortedList<TKey, TStep>(this._c);
-            var closed = new StepCollection<TKey, TStep>(this._ec);
+            if (this._nextStepsFactory == null)
+                throw new InvalidOperationException("Property NextStepFactory is null.");
 
-            open.Add(goal.Key, goal);
+            var open = new SortedList<TKey, TStep>(this._c);
+            var closed = new Dictionary<TKey, TStep>(this._ec);
+
+            open.Add(startAt.Key, startAt);
 
             while (open.Count > 0)
             {
+#if DEBUG
+                Debug.WriteLine("Open:");
+                Debug.WriteLine(string.Join(Environment.NewLine, open));
+                Debug.WriteLine("Closed:");
+                Debug.WriteLine(string.Join(Environment.NewLine, closed));
+                Debug.WriteLine("-------");
+#endif
                 var current = open.First().Value;
 
-                closed.Add(current);
+                open.Remove(current.Key);
+                closed.Add(current.Key, current);
 
                 if (this._ec.Equals(current.Key, goal.Key))
                     return current;
@@ -91,17 +103,16 @@ namespace AlgorithmForce.HeuristicSuite
                 foreach (var next in this._nextStepsFactory(current))
                 {
                     if (!IsValidStep(next)) continue;
-                    if (closed.Contains(next)) continue;
+                    if (closed.ContainsKey(next.Key)) continue;
 
                     next.PreviousStep = current;
 
                     var prior = default(TStep);
-                    //                                            next has better score
+                    //                                            score is updated and better than prior.
                     if (!open.TryGetValue(next.Key, out prior) || this._c.Compare(next.Key, prior.Key) < 0)
                     {
                         if (prior != null)
                             open.Remove(prior.Key);
-
                         open.Add(next.Key, next);
                     }
                 }
@@ -111,7 +122,7 @@ namespace AlgorithmForce.HeuristicSuite
 
         public bool IsValidStep(TStep step)
         {
-            return step != null && this._stepValidityChecker(step);
+            return step != null && step.IsValidStep && this._stepValidityChecker(step);
         }
 
         #endregion

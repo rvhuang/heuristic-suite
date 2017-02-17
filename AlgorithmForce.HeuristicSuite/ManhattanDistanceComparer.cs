@@ -4,22 +4,24 @@ namespace AlgorithmForce.HeuristicSuite
 {
     public class ManhattanDistanceComparer : IComparer<Point2DInt64>
     {
-        private readonly Point2DInt64 goal2d;
-
-        public Point2DInt64 Point2DInt64Goal
+        private readonly Point2DInt64 goal;
+        
+        public Point2DInt64 Goal
         {
-            get { return goal2d; }
+            get { return goal; }
         }
 
         public ManhattanDistanceComparer(Point2DInt64 goal)
         {
-            this.goal2d = goal;
+            this.goal = goal;
         }
 
         public int Compare(Point2DInt64 a, Point2DInt64 b)
         {
-            var distanceA = DistanceHelper.GetManhattanDistance(goal2d.X, goal2d.Y, a.X, a.Y);
-            var distanceB = DistanceHelper.GetManhattanDistance(goal2d.X, goal2d.Y, b.X, b.Y);
+            var distanceA =
+                DistanceHelper.GetManhattanDistance(a.X, a.Y, goal.X, goal.Y);
+            var distanceB =
+                DistanceHelper.GetManhattanDistance(b.X, b.Y, goal.X, goal.Y);
 
             return DistanceHelper.Int64Comparer.Compare(distanceA, distanceB);
         }
