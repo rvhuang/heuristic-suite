@@ -15,7 +15,7 @@ namespace AlgorithmForce.HeuristicSuite
             }
             while (step != null);
         }
-
+        
         public static IStep<TKey, TStep> Reverse<TKey, TStep>(this IStep<TKey, TStep> step) 
         { 
             var prior = default(IStep<TKey, TStep>);

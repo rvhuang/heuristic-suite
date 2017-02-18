@@ -11,84 +11,99 @@ namespace AlgorithmForce.HeuristicSuite
         #region Fields
 
         public static readonly Func<TStep, bool> DefaultStepValidityChecker = step => step.IsValidStep;
-
-        private readonly IComparer<TKey> _c;
-        private readonly IEqualityComparer<TKey> _ec;
+        public static readonly Func<TStep, IEnumerable<TStep>> DefaultNextStepFactory = step => Enumerable.Empty<TStep>();
 
         private Func<TStep, IEnumerable<TStep>> _nextStepsFactory;
         private Func<TStep, bool> _stepValidityChecker = DefaultStepValidityChecker;
 
+        private IComparer<TKey> _comparer = Comparer<TKey>.Default;
+        private IEqualityComparer<TKey> _equalityComparer = EqualityComparer<TKey>.Default;
+
+        private HeuristicFunctionPreference preference;
+
         #endregion
 
         #region Properties
+         
+        public Func<TStep, IEnumerable<TStep>> NextStepsFactory
+        {
+            get { return this._nextStepsFactory; }
+            set { this._nextStepsFactory = value == null ? DefaultNextStepFactory : value; }
+        }
+
+        public Func<TStep, bool> StepValidityChecker
+        {
+            get { return this._stepValidityChecker; }
+            set { this._stepValidityChecker = value == null ? DefaultStepValidityChecker : value; }
+        }
 
         public IComparer<TKey> Comparer
         {
-            get { return this._c; }
+            get { return this._comparer; }
+            set { this._comparer = value == null ? Comparer<TKey>.Default : value; }
         }
 
         public IEqualityComparer<TKey> EqualityComparer
         {
-            get { return this._ec; }
+            get { return this._equalityComparer; }
+            set { this._equalityComparer = value == null ? EqualityComparer<TKey>.Default : value ; }
         }
 
-        public Func<TStep, IEnumerable<TStep>> NextStepsFactory
+        public HeuristicFunctionPreference HeuristicFunctionPreference
         {
-            get { return this._nextStepsFactory; }
-            set { this._nextStepsFactory = value; }
-        }
-
-        public Func<TStep, bool> StepValidityChecker // This is optional
-        {
-            get { return this._stepValidityChecker; }
-            set { this._stepValidityChecker = value == null ? DefaultStepValidityChecker : value; }
+            get { return this.preference; }
+            set
+            {
+                if (Enum.IsDefined(typeof(HeuristicFunctionPreference), value))
+                    this.preference = value;
+                else
+                    throw new ArgumentException("Not a defined value.", "HeuristicFunctionPreference");
+            }
         }
 
         #endregion
 
         #region Constructor
 
-        internal AStar()
-            : this(Comparer<TKey>.Default, EqualityComparer<TKey>.Default)
-        {
-        }
-
-        internal AStar(IEqualityComparer<TKey> ec)
-            : this(Comparer<TKey>.Default, ec)
-        {
-        }
-
-        internal AStar(IComparer<TKey> c)
-            : this(c, EqualityComparer<TKey>.Default)
-        {
-        }
-
-        internal AStar(IComparer<TKey> c, IEqualityComparer<TKey> ec)
-        {
-            this._c = c;
-            this._ec = ec;
+        public AStar()
+        { 
         }
 
         #endregion
 
         #region Methods
-
-        public TStep Execute(TStep startAt, TStep goal)
+        
+        public TStep Execute(TStep from, TStep goal)
         {
-            if (startAt == null)
-                throw new ArgumentNullException("startAt");
+            return this.Execute(from, goal, this._nextStepsFactory, this._comparer, this._equalityComparer);
+        }
 
-            if (goal == null)
-                throw new ArgumentNullException("goal");
+        public TStep Execute(TStep from, TStep goal, Func<TStep, IEnumerable<TStep>> nextStepsFactory)
+        {
+            return this.Execute(from, goal, nextStepsFactory, this._comparer, this._equalityComparer);
+        }
 
-            if (this._nextStepsFactory == null)
-                throw new InvalidOperationException("Property NextStepFactory is null.");
+        public TStep Execute(TStep from, TStep goal, IComparer<TKey> c)
+        {
+            return this.Execute(from, goal, this._nextStepsFactory, c, this._equalityComparer);
+        }
 
-            var sc = new StepComparer<TKey, TStep>(this._c, StepComparerMode.DepthFirst);
+        public TStep Execute(TStep from, TStep goal, Func<TStep, IEnumerable<TStep>> nextStepsFactory, IComparer<TKey> c)
+        {
+            return this.Execute(from, goal, nextStepsFactory, c, this._equalityComparer);
+        }
+        
+        public TStep Execute(TStep from, TStep goal, Func<TStep, IEnumerable<TStep>> nextStepsFactory, IComparer<TKey> c, IEqualityComparer<TKey> ec)
+        {
+            if (from == null) throw new ArgumentNullException("from");
+            if (goal == null) throw new ArgumentNullException("goal");
+            if (nextStepsFactory == null) throw new ArgumentNullException("nextStepsFactory");
+
+            var sc = new StepComparer<TKey, TStep>(c, this.preference);
             var open = new List<TStep>();
-            var closed = new Dictionary<TKey, TStep>(this._ec);
-
-            open.Add(startAt);
+            var closed = new Dictionary<TKey, TStep>(ec);
+            
+            open.Add(from);
 
             while (open.Count > 0)
             {
@@ -104,18 +119,18 @@ namespace AlgorithmForce.HeuristicSuite
                 open.RemoveAt(0);
                 closed.Add(current.Key, current);
 
-                if (this._ec.Equals(current.Key, goal.Key))
+                if (closed.Comparer.Equals(current.Key, goal.Key))
                     return current;
 
-                foreach (var next in this._nextStepsFactory(current))
+                foreach (var next in nextStepsFactory(current))
                 {
                     if (closed.ContainsKey(next.Key)) continue;
                     if (!IsValidStep(next)) continue;
-                    if (!open.Any(step => this._ec.Equals(next.Key, step.Key)))
+                    if (!open.Any(step => closed.Comparer.Equals(next.Key, step.Key)))
                     {
                         next.PreviousStep = current;
                         next.Depth = current.Depth + 1;
-                        
+
                         open.Add(next);
                     }
                 }

@@ -10,9 +10,8 @@ namespace AlgorithmForce.Example.PathFinding
     {
         public static void Main(string[] args)
         {
-            var max = new Point2DInt64(20, 20);
-            var startAt = new Point2DInt64(5, 0);
-            var goal = new Point2DInt64(10, 18);
+            // Define map border and obstacles.  
+            var border = new Point2DInt64(20, 20);
             var obstacles = new HashSet<Point2DInt64>();
 
             #region Map Data
@@ -42,34 +41,81 @@ namespace AlgorithmForce.Example.PathFinding
 
             #endregion
 
-            var aStar = AStarFactory.Create<Point2DInt64, Step>(new ChebyshevDistanceComparer(goal));
-
+            // Initial the engine. 
+            var aStar = new AStar<Point2DInt64, Step>();
+            // Tell the engine how to get next steps. 
             aStar.NextStepsFactory = step => step.GetNextSteps();
+            // Tell the engine how to check if there is any obstacle in the position.
             aStar.StepValidityChecker = step => !obstacles.Contains(step.Position);
 
-            var result = aStar.Execute(new Step(startAt, max, 1), new Step(goal, max, 1)).Enumerate().ToArray();
+            var fromPos = Point2DInt64.Zero;
+            var goalPos = Point2DInt64.Zero;
 
-            for (var y = 0; y < max.Y; y++)
+            while (true)
             {
-                for (var x = 0; x < max.X; x++)
-                {
-                    var point = new Point2DInt64(x, y);
+                #region Read From and To from input
 
-                    if (obstacles.Contains(point))
-                        Console.Write(" X");
-                    else if (point.Equals(startAt))
-                        Console.Write(" V");
-                    else if (point.Equals(goal))
-                        Console.Write(" V");
-                    else if (result.Any(step => step.Key.Equals(point)))
-                        Console.Write(" O");
-                    else
-                        Console.Write("--");
+                Console.WriteLine("Tell the engine where to start: (example: 5, 0)");
+
+                var startStr = Console.ReadLine();
+
+                Console.WriteLine("Tell the engine where to end: (example: 10, 18)");
+
+                var endStr = Console.ReadLine();
+
+                try
+                {
+                    var array1 = startStr.Split(',').Select(long.Parse).ToArray();
+                    var array2 = endStr.Split(',').Select(long.Parse).ToArray();
+
+                    fromPos = new Point2DInt64(array1[0], array1[1]);
+                    goalPos = new Point2DInt64(array2[0], array2[1]);
                 }
-                Console.WriteLine();
+                catch
+                {
+                    continue;
+                }
+
+                #endregion
+
+                var stepUnit = 1;
+                var from = new Step(fromPos, border, stepUnit);
+                var goal = new Step(goalPos, border, stepUnit);
+
+                // Compare two positions and the goal position with Manhattan Distance.
+                // ChebyshevDistanceComparer is also available.
+                var comparer = new ManhattanDistanceComparer(goal.Position);
+
+                // Get result and draw the map! 
+                var path = aStar.Execute(from, goal, comparer).Enumerate().ToArray();
+                
+                for (var y = 0; y < border.Y; y++)
+                {
+                    for (var x = 0; x < border.X; x++)
+                    {
+                        var point = new Point2DInt64(x, y);
+
+                        if (obstacles.Contains(point))
+                            Console.Write(" X ");
+                        else if (point.Equals(from.Position))
+                            Console.Write(" V ");
+                        else if (point.Equals(goal.Position))
+                            Console.Write(" V ");
+                        else if (path.Any(step => step.Key.Equals(point)))
+                            Console.Write(" O ");
+                        else
+                            Console.Write(" - ");
+                    }
+                    Console.WriteLine();
+                }
+
+                Console.WriteLine("Total steps: {0}. Press any key to continue or 'X' to exit...", path.Count());
+
+                if (Console.ReadKey(true).Key != ConsoleKey.X)
+                    Console.Clear();
+                else
+                    break;
             }
-            Console.WriteLine("Total steps: {0}", result.Count());
-            Console.ReadKey(true);
         }
     }
 }
