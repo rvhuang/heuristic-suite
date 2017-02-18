@@ -2,16 +2,17 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 
 namespace AlgorithmForce.HeuristicSuite
 {
     public class AStar<TKey, TStep>
-        where TStep : IStep<TKey, TStep>
+        where TStep : IStep<TKey>
     {
         #region Fields
 
-        public static readonly Func<TStep, IEnumerable<TStep>> DefaultNextStepFactory = step => Enumerable.Empty<TStep>();
-        public static readonly Func<TStep, bool> DefaultStepValidityChecker = step => step.IsValidStep;
+        public static readonly Func<TStep, IEnumerable<TStep>> DefaultNextStepFactory;
+        public static readonly Func<TStep, bool> DefaultStepValidityChecker;
 
         private Func<TStep, IEnumerable<TStep>> _nextStepsFactory = DefaultNextStepFactory;
         private Func<TStep, bool> _stepValidityChecker = DefaultStepValidityChecker;
@@ -65,8 +66,18 @@ namespace AlgorithmForce.HeuristicSuite
 
         #region Constructor
 
+        static AStar()
+        {
+            if (typeof(INextStepFactory<TKey, TStep>).GetTypeInfo().IsAssignableFrom(typeof(TStep)))
+                DefaultNextStepFactory = step => (step as INextStepFactory<TKey, TStep>).GetNextSteps();
+            else
+                DefaultNextStepFactory = step => Enumerable.Empty<TStep>();
+
+            DefaultStepValidityChecker = step => step.IsValidStep;
+        }
+
         public AStar()
-        { 
+        {
         }
 
         #endregion
@@ -102,7 +113,7 @@ namespace AlgorithmForce.HeuristicSuite
             var sc = new StepComparer<TKey, TStep>(c, this.preference);
             var open = new List<TStep>();
             var closed = new Dictionary<TKey, TStep>(ec);
-            
+            (from as INextStepFactory<TKey, TStep>).GetNextSteps();
             open.Add(from);
 
             while (open.Count > 0)
@@ -124,6 +135,7 @@ namespace AlgorithmForce.HeuristicSuite
                 
                 foreach (var next in nextStepsFactory(current))
                 {
+                    if (next == null) continue;
                     if (closed.ContainsKey(next.Key)) continue;
                     if (!IsValidStep(next)) continue;
                     if (!open.Any(step => closed.Comparer.Equals(next.Key, step.Key)))
@@ -141,7 +153,7 @@ namespace AlgorithmForce.HeuristicSuite
 
         public bool IsValidStep(TStep step)
         {
-            return step != null && step.IsValidStep && this._stepValidityChecker(step);
+            return step.IsValidStep && this._stepValidityChecker(step);
         }
 
         #endregion

@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace AlgorithmForce.HeuristicSuite
 {
-    public interface IStep<TKey, TStep>
+    public interface IStep<TKey>
     {
         TKey Key { get; }
 
@@ -11,6 +10,12 @@ namespace AlgorithmForce.HeuristicSuite
 
         int Depth { get; set; }
 
-        IStep<TKey, TStep> PreviousStep { get; set; }
+        IStep<TKey> PreviousStep { get; set; }
+    }
+
+    public interface INextStepFactory<TKey, TStep>
+            where TStep : IStep<TKey>
+    {
+        IEnumerable<TStep> GetNextSteps();
     }
 }

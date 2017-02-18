@@ -5,7 +5,7 @@ namespace AlgorithmForce.Example.PathFinding
 {
     using HeuristicSuite;
 
-    class Step : IStep<Point2DInt64, Step>
+    class Step : IStep<Point2DInt64>, INextStepFactory<Point2DInt64, Step>
     {
         #region Fields
 
@@ -28,17 +28,17 @@ namespace AlgorithmForce.Example.PathFinding
             get { return this._pos.X < this._border.X && this._pos.Y < this._border.Y && this._pos.X >= 0 && this._pos.Y >= 0; }
         }
 
-        Point2DInt64 IStep<Point2DInt64, Step>.Key
+        Point2DInt64 IStep<Point2DInt64>.Key
         {
             get { return this._pos; }
         }
 
-        int IStep<Point2DInt64, Step>.Depth
+        int IStep<Point2DInt64>.Depth
         {
             get; set;
         }
 
-        IStep<Point2DInt64, Step> IStep<Point2DInt64, Step>.PreviousStep
+        IStep<Point2DInt64> IStep<Point2DInt64>.PreviousStep
         {
             get; set;
         }

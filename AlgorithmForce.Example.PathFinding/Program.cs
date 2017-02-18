@@ -44,7 +44,7 @@ namespace AlgorithmForce.Example.PathFinding
             // Initial the engine. 
             var aStar = new AStar<Point2DInt64, Step>();
             // Tell the engine how to get next steps. 
-            aStar.NextStepsFactory = step => step.GetNextSteps();
+            // aStar.NextStepsFactory = step => step.GetNextSteps();
             // Tell the engine how to check if there is any obstacle in the position.
             aStar.StepValidityChecker = step => !obstacles.Contains(step.Position);
 

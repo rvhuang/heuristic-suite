@@ -4,7 +4,7 @@ namespace AlgorithmForce.HeuristicSuite
 {
     public static class StepExtensions
     {
-        public static IEnumerable<IStep<TKey, TStep>> Enumerate<TKey, TStep>(this IStep<TKey, TStep> step)
+        public static IEnumerable<IStep<TKey>> Enumerate<TKey>(this IStep<TKey> step)
         {
             if (step == null)
                 yield break;
@@ -16,11 +16,11 @@ namespace AlgorithmForce.HeuristicSuite
             while (step != null);
         }
         
-        public static IStep<TKey, TStep> Reverse<TKey, TStep>(this IStep<TKey, TStep> step) 
+        public static IStep<TKey> Reverse<TKey>(this IStep<TKey> step) 
         { 
-            var prior = default(IStep<TKey, TStep>);
+            var prior = default(IStep<TKey>);
             var current = step;
-            var next = default(IStep<TKey, TStep>);
+            var next = default(IStep<TKey>);
 
             while (current != null)
             {

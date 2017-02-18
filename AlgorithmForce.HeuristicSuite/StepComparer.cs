@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace AlgorithmForce.HeuristicSuite
 {
     class StepComparer<TKey, TStep> : IComparer<TStep>
-        where TStep : IStep<TKey, TStep>
+        where TStep : IStep<TKey>
     {
         private readonly IComparer<TKey> _keyComparer;
         private readonly Comparison<TStep> _comparison;
