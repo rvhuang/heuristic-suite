@@ -29,9 +29,9 @@ namespace AlgorithmForce.HeuristicSuite
             }
         }
 
-        public int Compare(TStep x, TStep y)
+        public int Compare(TStep a, TStep b)
         {
-            return this._comparison(x, y);
+            return this._comparison(a, b);
         }
 
         private int AverageComparison(TStep a, TStep b)
@@ -54,10 +54,10 @@ namespace AlgorithmForce.HeuristicSuite
             return 0;
         }
 
-        private int KeyFirstComparison(TStep x, TStep y)
+        private int KeyFirstComparison(TStep a, TStep b)
         {
-            var keyComparing = _keyComparer.Compare(x.Key, y.Key); // H(x)
-            var depthComparing = DistanceHelper.Int32Comparer.Compare(x.Depth, y.Depth); // G(x)
+            var keyComparing = _keyComparer.Compare(a.Key, b.Key); // H(x)
+            var depthComparing = DistanceHelper.Int32Comparer.Compare(a.Depth, b.Depth); // G(x)
 
             if (keyComparing < 0 && depthComparing < 0)
                 return -1;
@@ -74,10 +74,10 @@ namespace AlgorithmForce.HeuristicSuite
                 return depthComparing;
         }
 
-        private int DepthFirstComparison(TStep x, TStep y)
+        private int DepthFirstComparison(TStep a, TStep b)
         {
-            var keyComparing = _keyComparer.Compare(x.Key, y.Key); // H(x)
-            var depthComparing = DistanceHelper.Int32Comparer.Compare(x.Depth, y.Depth); // G(x)
+            var keyComparing = _keyComparer.Compare(a.Key, b.Key); // H(x)
+            var depthComparing = DistanceHelper.Int32Comparer.Compare(a.Depth, b.Depth); // G(x)
 
             if (keyComparing < 0 && depthComparing < 0)
                 return -1;

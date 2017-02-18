@@ -10,10 +10,10 @@ namespace AlgorithmForce.HeuristicSuite
     {
         #region Fields
 
-        public static readonly Func<TStep, bool> DefaultStepValidityChecker = step => step.IsValidStep;
         public static readonly Func<TStep, IEnumerable<TStep>> DefaultNextStepFactory = step => Enumerable.Empty<TStep>();
+        public static readonly Func<TStep, bool> DefaultStepValidityChecker = step => step.IsValidStep;
 
-        private Func<TStep, IEnumerable<TStep>> _nextStepsFactory;
+        private Func<TStep, IEnumerable<TStep>> _nextStepsFactory = DefaultNextStepFactory;
         private Func<TStep, bool> _stepValidityChecker = DefaultStepValidityChecker;
 
         private IComparer<TKey> _comparer = Comparer<TKey>.Default;
@@ -121,7 +121,7 @@ namespace AlgorithmForce.HeuristicSuite
 
                 if (closed.Comparer.Equals(current.Key, goal.Key))
                     return current;
-
+                
                 foreach (var next in nextStepsFactory(current))
                 {
                     if (closed.ContainsKey(next.Key)) continue;
