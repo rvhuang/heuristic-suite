@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace AlgorithmForce.Example.FifteenPuzzle
+namespace AlgorithmForce.Example.EightPuzzle
 {
     using HeuristicSuite;
 

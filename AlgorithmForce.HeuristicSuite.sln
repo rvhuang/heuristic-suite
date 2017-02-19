@@ -7,7 +7,7 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AlgorithmForce.HeuristicSui
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AlgorithmForce.Example.PathFinding", "AlgorithmForce.Example.PathFinding\AlgorithmForce.Example.PathFinding.xproj", "{96FD9876-BCDA-41E0-BDDC-EAB392210EAF}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AlgorithmForce.Example.FifteenPuzzle", "AlgorithmForce.Example.FifteenPuzzle\AlgorithmForce.Example.FifteenPuzzle.xproj", "{B4E8C34E-2AA0-4BEB-AC94-18E3337DF7D2}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AlgorithmForce.Example.EightPuzzle", "AlgorithmForce.Example.EightPuzzle\AlgorithmForce.Example.EightPuzzle.xproj", "{B4E8C34E-2AA0-4BEB-AC94-18E3337DF7D2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

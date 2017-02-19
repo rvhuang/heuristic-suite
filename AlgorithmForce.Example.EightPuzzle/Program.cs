@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AlgorithmForce.Example.FifteenPuzzle
+namespace AlgorithmForce.Example.EightPuzzle
 {
     using HeuristicSuite;
 
