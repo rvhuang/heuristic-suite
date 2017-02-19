@@ -2,25 +2,25 @@
 
 namespace AlgorithmForce.HeuristicSuite
 {
-    public struct Point2DInt64 : IEquatable<Point2DInt64>
+    public struct Point2DInt32 : IEquatable<Point2DInt32>
     {
         #region Fields
 
-        public static readonly Point2DInt64 Zero = new Point2DInt64();
+        public static readonly Point2DInt32 Zero = new Point2DInt32();
 
-        private readonly long x;
-        private readonly long y;
+        private readonly int x;
+        private readonly int y;
 
         #endregion
 
         #region Properties
 
-        public long X
+        public int X
         {
             get { return x; }
         }
 
-        public long Y
+        public int Y
         {
             get { return y; }
         }
@@ -29,7 +29,7 @@ namespace AlgorithmForce.HeuristicSuite
 
         #region Constructor
 
-        public Point2DInt64(long x, long y)
+        public Point2DInt32(int x, int y)
         {
             this.x = x;
             this.y = y;
@@ -39,14 +39,14 @@ namespace AlgorithmForce.HeuristicSuite
 
         #region Methods
 
-        public bool Equals(Point2DInt64 other)
+        public bool Equals(Point2DInt32 other)
         {
             return this.x == other.x && this.y == other.y;
         }
 
         public override bool Equals(object obj)
         {
-            return obj is Point2DInt64 ? this.Equals((Point2DInt64)obj) : false;
+            return obj is Point2DInt32 ? this.Equals((Point2DInt32)obj) : false;
         }
 
         public override int GetHashCode()
@@ -69,9 +69,9 @@ namespace AlgorithmForce.HeuristicSuite
 
         #region Others
 
-        public Point2DInt64 Add(long offsetX, long offsetY)
+        public Point2DInt32 Add(int offsetX, int offsetY)
         {
-            return new Point2DInt64(this.x + offsetX, this.y + offsetY);
+            return new Point2DInt32(this.x + offsetX, this.y + offsetY);
         }
 
         #endregion

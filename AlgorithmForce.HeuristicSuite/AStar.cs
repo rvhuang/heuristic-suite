@@ -113,7 +113,7 @@ namespace AlgorithmForce.HeuristicSuite
             var sc = new StepComparer<TKey, TStep>(c, this.preference);
             var open = new List<TStep>();
             var closed = new Dictionary<TKey, TStep>(ec);
-            (from as INextStepFactory<TKey, TStep>).GetNextSteps();
+
             open.Add(from);
 
             while (open.Count > 0)
@@ -126,7 +126,7 @@ namespace AlgorithmForce.HeuristicSuite
                 Debug.WriteLine("-------");
 #endif
                 var current = open.First();
-
+                
                 open.RemoveAt(0);
                 closed.Add(current.Key, current);
 
@@ -157,5 +157,11 @@ namespace AlgorithmForce.HeuristicSuite
         }
 
         #endregion
+    }
+
+    public class AStar<TStep> : AStar<TStep, TStep>
+        where TStep : IStep<TStep>
+    {
+
     }
 }
