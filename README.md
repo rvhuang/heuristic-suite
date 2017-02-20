@@ -2,9 +2,9 @@
 
 ### Overview
 
-**Heuristic Suite** is an experimental implementation of A* algorithm in generic programming. The project is aimed to define a unified engine from abstract perspective for various scenarios that can use A* algorithm to solve the puzzle.
+**Heuristic Suite** is an experimental implementation of A* algorithm in generic programming. The project is aimed to define a unified engine from abstract perspective for various scenarios that can use A* algorithm to solve the puzzle. The implementation takes advantages of built-in .Net Framework comparison mechanism such as [IComparer(T)](https://msdn.microsoft.com/en-us/library/8ehhxeaf.aspx) and [IEqualityComparer(T)](https://msdn.microsoft.com/en-us/library/ms132151.aspx) to create great compatibility with .Net development.
 
-### Quick Start
+### Basic Guide
 
 Following information will be required to utilize the engine:
 
