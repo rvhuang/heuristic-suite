@@ -2,7 +2,7 @@
 
 ### Overview
 
-**Heuristic Suite** is an experimental implementation of A\* algorithm in generic programming. The project is aimed to define a unified engine from abstract perspective for various puzzles that can be solved with A\* algorithm. The implementation takes advantages of built-in .Net Framework comparison mechanism such as [IComparer(T)](https://msdn.microsoft.com/en-us/library/8ehhxeaf.aspx) and [IEqualityComparer(T)](https://msdn.microsoft.com/en-us/library/ms132151.aspx) to create great compatibility with .Net development.
+**Heuristic Suite** is an experimental implementation of A\* algorithm in generic programming. The project is aimed to define an engine from abstract perspective that can be applied to any puzzle, as long as the puzzle can be resolved with the algorithm. The implementation takes advantages of built-in .Net Framework comparison mechanism such as [IComparer(T)](https://msdn.microsoft.com/en-us/library/8ehhxeaf.aspx) and [IEqualityComparer(T)](https://msdn.microsoft.com/en-us/library/ms132151.aspx) to create great compatibility with .Net development.
 
 ### Basic Guide
 
@@ -31,11 +31,11 @@ Now we can [Execute](https://github.com/rvhuang/heuristic-suite/blob/master/Algo
 
 More examples will be added in future.
 
-### Advance Options
+### Advanced Options
 
 By changing [HeuristicFunctionPreference](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/AStar.cs#L53) property, we can give different priority to G(x) function, which is based on [Depth](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/IStep.cs#L11) and H(x) function, which is based on [Key](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/IStep.cs#L7) to adjust the heuristic function. The default value is `Average` which gives both functions same priority.
 
-More advance options will be added in future version.
+More advanced options will be added in future version.
 
 ### Platform
 
