@@ -14,7 +14,7 @@ Following information is required in order to utilize the engine:
 
 2. **The method to compare steps**
 
-   During the process, steps are compared with each other by `Key` property to determine which has better score. This can be done by implementing [IComparable(TKey)](https://msdn.microsoft.com/en-us/library/4d7sx9hd.aspx) or providing [IComparer(TKey)](https://msdn.microsoft.com/en-us/library/8ehhxeaf.aspx) instance.
+   Steps are compared to each other by `Key` property to determine which has better score. This can be done by implementing [IComparable(TKey)](https://msdn.microsoft.com/en-us/library/4d7sx9hd.aspx) or providing [IComparer(TKey)](https://msdn.microsoft.com/en-us/library/8ehhxeaf.aspx) instance.
 
 3. **The method to get next steps from current step** 
 
