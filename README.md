@@ -10,15 +10,15 @@ Following information is required in order to utilize the engine:
 
 1. **The type of step for the puzzle**
 
-   The type will be required to implement [IStep(TKey)](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/IStep.cs) interface. The instance of the type represents the state of puzzle. `Key` is the property used to check the equality, and compare between two steps.
+    The type will be required to implement [IStep(TKey)](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/IStep.cs) interface. The instance of the type represents the state of puzzle. `Key` is the property used to check the equality, and compare between two steps.
 
 2. **The method to compare steps**
 
-   Steps are compared to each other by `Key` property to determine which has better score. This can be done by implementing [IComparable(TKey)](https://msdn.microsoft.com/en-us/library/4d7sx9hd.aspx) or providing [IComparer(TKey)](https://msdn.microsoft.com/en-us/library/8ehhxeaf.aspx) instance.
+    Steps are compared to each other by `Key` property to determine which has better score. This can be done by implementing [IComparable(TKey)](https://msdn.microsoft.com/en-us/library/4d7sx9hd.aspx) or providing [IComparer(TKey)](https://msdn.microsoft.com/en-us/library/8ehhxeaf.aspx) instance.
 
 3. **The method to get next steps from current step** 
 
-   Next step information can be given by implementing [INextStepFactory(TKey, TStep)](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/IStep.cs) interface, or providing [NextStepFactory](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/AStar.cs#L29) delegate.
+    Next step information can be given by implementing [INextStepFactory(TKey, TStep)](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/IStep.cs) interface, or providing [NextStepFactory](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/AStar.cs#L29) delegate.
 
 Now we can [Execute](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/AStar.cs#L87) the engine with the `from` and `goal` steps to get the solution. If the solution exists, you can [Enumerate](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/StepExtensions.cs#L7) each of steps, or [Reverse](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/StepExtensions.cs#L19) them before the enumeration starts.
 
@@ -26,14 +26,14 @@ Now we can [Execute](https://github.com/rvhuang/heuristic-suite/blob/master/Algo
 
 * Path Finding ([AlgorithmForce.Example.PathFinding](https://github.com/rvhuang/heuristic-suite/tree/master/AlgorithmForce.Example.PathFinding))
 
-   The example demonstrates the most common and traditional puzzle that use A\* algorithm to solve.
+    The example demonstrates the most common and traditional puzzle that use A\* algorithm to solve.
 
 * 8-Puzzle ([AlgorithmForce.Example.EightPuzzle](https://github.com/rvhuang/heuristic-suite/tree/master/AlgorithmForce.Example.EightPuzzle))
 
-   The example demonstrates how to solve the 8-puzzle with A\* algorithm. Following figures show the initial and goal steps of the puzzle:
-   
-   ![From](http://www.8puzzle.com/images/8_puzzle_start_state_a.png)
-   ![Goal](http://www.8puzzle.com/images/8_puzzle_goal_state_a.png)
+    The example demonstrates how to solve the 8-puzzle with A\* algorithm. Following figures show the initial and goal steps of the puzzle:
+
+    ![From](http://www.8puzzle.com/images/8_puzzle_start_state_a.png)
+    ![Goal](http://www.8puzzle.com/images/8_puzzle_goal_state_a.png)
 
 More examples will be added in future.
 
