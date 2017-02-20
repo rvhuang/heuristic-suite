@@ -8,9 +8,9 @@
 
 Following information is required in order to utilize the engine:
 
-1. **The type of step in the puzzle**
+1. **The type of step for the puzzle**
 
-   The type will be required to implement [IStep(TKey)](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/IStep.cs) interface. `Key` is the property used to check the equality, and compare between two steps.
+   The type will be required to implement [IStep(TKey)](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/IStep.cs) interface. The instance of the type represents the state of puzzle. `Key` is the property used to check the equality, and compare between two steps.
 
 2. **The method to compare steps**
 
