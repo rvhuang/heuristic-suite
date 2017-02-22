@@ -16,6 +16,13 @@ namespace AlgorithmForce.Example.RubikCube
         
         public const int EdgeLength = 2; // A 2 x 2 size of face.
 
+        public const int TopFaceIndex = 0;
+        public const int ButtomFaceIndex = 1;
+        public const int LeftFaceIndex = 2;
+        public const int RightFaceIndex = 3;
+        public const int FrontFaceIndex = 4;
+        public const int BackFaceIndex = 5;
+
         private readonly CubeColor[][] faces = new CubeColor[6][];
         private readonly int hashCode;
         
@@ -68,7 +75,7 @@ namespace AlgorithmForce.Example.RubikCube
 
         private CubeState(CubeColor[][] faces)
         {
-            this.faces = faces.Select(f => f.ToArray()).ToArray(); // create a copy
+            this.faces = faces; // create a copy
             this.hashCode = CubeEqualityComparer.GetHashCode(this.faces);
         }
 
@@ -101,11 +108,81 @@ namespace AlgorithmForce.Example.RubikCube
 
         #endregion
 
-        #region
+        #region INextStepFactory<CubeState, CubeState> Related
 
         IEnumerable<CubeState> INextStepFactory<CubeState, CubeState>.GetNextSteps()
         {
-            throw new NotImplementedException();
+            for (var row = 0; row < EdgeLength; row++)
+                yield return new CubeState(this.FlipLeft(row));
+
+            for (var row = 0; row < EdgeLength; row++)
+                yield return new CubeState(this.FlipRight(row));
+
+            for (var col = 0; col < EdgeLength; col++)
+                yield return new CubeState(this.FlipUp(col));
+
+            for (var col = 0; col < EdgeLength; col++)
+                yield return new CubeState(this.FlipDown(col));
+        }
+
+        private CubeColor[][] FlipLeft(int row)
+        {
+            var cloned = this.faces.Select(f => f.ToArray()).ToArray();
+
+            // TODO:
+
+            return cloned;
+        }
+
+        private CubeColor[][] FlipRight(int row)
+        {
+            var cloned = this.faces.Select(f => f.ToArray()).ToArray();
+
+            // TODO:
+
+            return cloned;
+        }
+
+        private CubeColor[][] FlipUp(int col)
+        {
+            var cloned = this.faces.Select(f => f.ToArray()).ToArray();
+
+            // TODO:
+
+            return cloned;
+        }
+
+        private CubeColor[][] FlipDown(int col)
+        {
+            var cloned = this.faces.Select(f => f.ToArray()).ToArray();
+
+            // TODO:
+
+            return cloned;
+        }
+
+        private static void Swap<T>(IList<T> array, int indexA, int indexB)
+        {
+            var temp = array[indexA];
+
+            array[indexA] = array[indexB];
+            array[indexB] = temp;
+        }
+
+        private static void Swap<T>(IList<T> arrayA, IList<T> arrayB, int index)
+        {
+            var temp = arrayA[index];
+
+            arrayA[index] = arrayB[index];
+            arrayB[index] = temp;
+        }
+        
+        private static void Swap<T>(ref T itemA, ref T itemB)
+        {
+            var temp = itemA;
+
+            itemA = itemB;
+            itemB = temp;
         }
 
         #endregion
