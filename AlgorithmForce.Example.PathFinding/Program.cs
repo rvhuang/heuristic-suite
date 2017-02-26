@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace AlgorithmForce.Example.PathFinding
@@ -10,81 +11,51 @@ namespace AlgorithmForce.Example.PathFinding
     {
         public static void Main(string[] args)
         {
-            // Define map border and obstacles.  
-            var border = new Point2DInt64(20, 20);
-            var obstacles = new HashSet<Point2DInt64>();
-
-            #region Map Data
-
-            obstacles.Add(new Point2DInt64(2, 8));
-            obstacles.Add(new Point2DInt64(3, 8));
-            obstacles.Add(new Point2DInt64(4, 8));
-            obstacles.Add(new Point2DInt64(5, 8));
-            obstacles.Add(new Point2DInt64(6, 8));
-            obstacles.Add(new Point2DInt64(3, 10));
-            obstacles.Add(new Point2DInt64(4, 10));
-            obstacles.Add(new Point2DInt64(5, 10));
-            obstacles.Add(new Point2DInt64(6, 10));
-            obstacles.Add(new Point2DInt64(7, 10));
-            obstacles.Add(new Point2DInt64(8, 10));
-            obstacles.Add(new Point2DInt64(9, 10));
-            obstacles.Add(new Point2DInt64(10, 10));
-            obstacles.Add(new Point2DInt64(11, 11));
-            obstacles.Add(new Point2DInt64(11, 12));
-            obstacles.Add(new Point2DInt64(11, 13));
-            obstacles.Add(new Point2DInt64(11, 14));
-            obstacles.Add(new Point2DInt64(11, 15));
-            obstacles.Add(new Point2DInt64(12, 15));
-            obstacles.Add(new Point2DInt64(13, 15));
-            obstacles.Add(new Point2DInt64(14, 15));
-            obstacles.Add(new Point2DInt64(15, 15));
-
-            #endregion
-
+            // Define map border and load map data.  
+            var border = new Point2DInt32(20, 20);
+            var mapData = LoadMapData();
+            var fromPos = mapData.Item1;
+            var goalPos = mapData.Item2;
+            var obstacles = mapData.Item3;
+            
             // Initial the engine. 
-            var aStar = new AStar<Point2DInt64, Step>();
+            var aStar = new AStar<Point2DInt32, Step>();
             // Tell the engine how to get next steps. 
             // aStar.NextStepsFactory = step => step.GetNextSteps();
             // Tell the engine how to check if there is any obstacle in the position.
             aStar.StepValidityChecker = step => !obstacles.Contains(step.Position);
-
-            var fromPos = Point2DInt64.Zero;
-            var goalPos = Point2DInt64.Zero;
-
+            
             while (true)
             {
-                #region Read From and To from input
+                // Compare two positions and the goal position with selected distance.
+                var comparer = default(IComparer<Point2DInt32>);
 
-                Console.WriteLine("Tell the engine where to start: (example: 5, 0)");
+                Console.WriteLine("Select comparer:");
+                Console.WriteLine("C)hebyshev Distance Comparer");
+                Console.WriteLine("E)uclidean Distance Comparer");
+                Console.WriteLine("M)anhattan Distance Comparer");
 
-                var startStr = Console.ReadLine();
-
-                Console.WriteLine("Tell the engine where to end: (example: 10, 18)");
-
-                var endStr = Console.ReadLine();
-
-                try
+                switch (Console.ReadKey(true).Key)
                 {
-                    var array1 = startStr.Split(',').Select(long.Parse).ToArray();
-                    var array2 = endStr.Split(',').Select(long.Parse).ToArray();
+                    case ConsoleKey.C:
+                        comparer = new ChebyshevDistanceComparer(goalPos);
+                        break;
 
-                    fromPos = new Point2DInt64(array1[0], array1[1]);
-                    goalPos = new Point2DInt64(array2[0], array2[1]);
+                    case ConsoleKey.E:
+                        comparer = new EuclideanDistanceComparer(goalPos);
+                        break;
+
+                    case ConsoleKey.M:
+                        comparer = new ManhattanDistanceComparer(goalPos);
+                        break;
+
+                    default:
+                        return;
                 }
-                catch
-                {
-                    continue;
-                }
-
-                #endregion
-
+                
                 var stepUnit = 1;
                 var from = new Step(fromPos, border, stepUnit);
                 var goal = new Step(goalPos, border, stepUnit);
-
-                // Compare two positions and the goal position with Manhattan Distance.
-                // ChebyshevDistanceComparer is also available.
-                var comparer = new ManhattanDistanceComparer(goal.Position);
 
                 // Get result and draw the map! 
                 var path = aStar.Execute(from, goal, comparer).Enumerate().ToArray();
@@ -93,14 +64,14 @@ namespace AlgorithmForce.Example.PathFinding
                 {
                     for (var x = 0; x < border.X; x++)
                     {
-                        var point = new Point2DInt64(x, y);
+                        var point = new Point2DInt32(x, y);
 
                         if (obstacles.Contains(point))
                             Console.Write(" X ");
                         else if (point.Equals(from.Position))
-                            Console.Write(" V ");
+                            Console.Write(" F ");
                         else if (point.Equals(goal.Position))
-                            Console.Write(" V ");
+                            Console.Write(" G ");
                         else if (path.Any(step => step.Key.Equals(point)))
                             Console.Write(" O ");
                         else
@@ -116,6 +87,36 @@ namespace AlgorithmForce.Example.PathFinding
                 else
                     break;
             }
+        }
+
+        public static Tuple<Point2DInt32, Point2DInt32, ISet<Point2DInt32>> LoadMapData()
+        {
+            var from = default(Point2DInt32);
+            var goal = default(Point2DInt32);
+            var obstacles = new HashSet<Point2DInt32>();
+            var mapData = File.ReadAllLines("MapData.txt");
+
+            for (int y = 0; y < mapData.Length; y++)
+            {
+                for (var x = 0; x < mapData[y].Length; x++)
+                {
+                    switch (mapData[y][x])
+                    {
+                        case 'F':
+                            from = new Point2DInt32(x, y);
+                            break;
+
+                        case 'G':
+                            goal = new Point2DInt32(x, y);
+                            break;
+
+                        case 'X':
+                            obstacles.Add(new Point2DInt32(x, y));
+                            break;
+                    }
+                }
+            }
+            return new Tuple<Point2DInt32, Point2DInt32, ISet<Point2DInt32>>(from, goal, obstacles);
         }
     }
 }

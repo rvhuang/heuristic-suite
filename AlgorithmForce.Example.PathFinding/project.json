@@ -2,7 +2,8 @@
   "buildOptions": {
     "debugType": "portable",
     "define": [ "DEBUG", "NET_CORE" ],
-    "emitEntryPoint": true
+    "emitEntryPoint": true,
+    "copyToOutput": [ "MapData.txt" ]
   },
   "dependencies": {
     "AlgorithmForce.HeuristicSuite": "1.0.0-*"
