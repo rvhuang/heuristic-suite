@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-
+﻿
 namespace AlgorithmForce.HeuristicSuite
 {
     public class ChebyshevDistanceComparer : IGoalOrientedComparer<Point2DInt32>, IGoalOrientedComparer<Point2DInt64>

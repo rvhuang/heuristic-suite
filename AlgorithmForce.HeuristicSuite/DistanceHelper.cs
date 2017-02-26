@@ -10,6 +10,9 @@ namespace AlgorithmForce.HeuristicSuite
 
         public static readonly IComparer<long> Int64Comparer = Comparer<long>.Default;
         public static readonly IComparer<int> Int32Comparer = Comparer<int>.Default;
+        public static readonly IComparer<double> DoubleComparer = Comparer<double>.Default;
+
+        #region Manhattan Distance
 
         public static long GetManhattanDistance(long x1, long y1, long x2, long y2)
         {
@@ -31,6 +34,10 @@ namespace AlgorithmForce.HeuristicSuite
             return GetManhattanDistance(a.X, a.Y, b.X, b.Y);
         }
 
+        #endregion
+
+        #region Chebyshev Distance
+
         public static long GetChebyshevDistance(long x1, long y1, long x2, long y2)
         {
             return Math.Max(Math.Abs(x1 - x2), Math.Abs(y1 - y2));
@@ -50,5 +57,31 @@ namespace AlgorithmForce.HeuristicSuite
         {
             return GetChebyshevDistance(a.X, a.Y, b.X, b.Y);
         }
+
+        #endregion
+
+        #region Euclidean Distance
+
+        public static double GetEuclideanDistance(long x1, long y1, long x2, long y2)
+        {
+            return Math.Sqrt(Math.Pow(x1 - x2, 2) + Math.Pow(y1 - y2, 2));
+        }
+
+        public static double GetEuclideanDistance(this Point2DInt64 a, Point2DInt64 b)
+        {
+            return GetEuclideanDistance(a.X, a.Y, b.X, b.Y);
+        }
+
+        public static double GetEuclideanDistance(int x1, int y1, int x2, int y2)
+        {
+            return Math.Sqrt(Math.Pow(x1 - x2, 2) + Math.Pow(y1 - y2, 2));
+        }
+
+        public static double GetEuclideanDistance(this Point2DInt32 a, Point2DInt32 b)
+        {
+            return GetEuclideanDistance(a.X, a.Y, b.X, b.Y);
+        }
+
+        #endregion
     }
 }
