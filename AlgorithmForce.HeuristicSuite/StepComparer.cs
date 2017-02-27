@@ -31,7 +31,10 @@ namespace AlgorithmForce.HeuristicSuite
 
         public int Compare(TStep a, TStep b)
         {
-            return this._comparison(a, b);
+            if (a == null) return b == null ? 0 : 1;
+            if (a != null) return b != null ? this._comparison(a, b) : -1;
+
+            return 0; // actually we won't reach here.
         }
 
         private int AverageComparison(TStep a, TStep b)

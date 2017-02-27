@@ -82,8 +82,8 @@ namespace AlgorithmForce.HeuristicSuite
 
         #endregion
 
-        #region Methods
-        
+        #region Execute 
+
         public TStep Execute(TStep from, TStep goal)
         {
             return this.Execute(from, goal, this._nextStepsFactory, this._comparer, this._equalityComparer);
@@ -106,6 +106,44 @@ namespace AlgorithmForce.HeuristicSuite
         
         public TStep Execute(TStep from, TStep goal, Func<TStep, IEnumerable<TStep>> nextStepsFactory, IComparer<TKey> c, IEqualityComparer<TKey> ec)
         {
+            return this.ExecuteCore(from, goal, nextStepsFactory, c, ec, false);
+        }
+
+        #endregion
+
+        #region Find Closest
+
+        public TStep FindClosest(TStep from, TStep goal)
+        {
+            return this.FindClosest(from, goal, this._nextStepsFactory, this._comparer, this._equalityComparer);
+        }
+
+        public TStep FindClosest(TStep from, TStep goal, Func<TStep, IEnumerable<TStep>> nextStepsFactory)
+        {
+            return this.FindClosest(from, goal, nextStepsFactory, this._comparer, this._equalityComparer);
+        }
+
+        public TStep FindClosest(TStep from, TStep goal, IComparer<TKey> c)
+        {
+            return this.FindClosest(from, goal, this._nextStepsFactory, c, this._equalityComparer);
+        }
+
+        public TStep FindClosest(TStep from, TStep goal, Func<TStep, IEnumerable<TStep>> nextStepsFactory, IComparer<TKey> c)
+        {
+            return this.FindClosest(from, goal, nextStepsFactory, c, this._equalityComparer);
+        }
+
+        public TStep FindClosest(TStep from, TStep goal, Func<TStep, IEnumerable<TStep>> nextStepsFactory, IComparer<TKey> c, IEqualityComparer<TKey> ec)
+        {
+            return this.ExecuteCore(from, goal, nextStepsFactory, c, ec, true);
+        }
+
+        #endregion
+
+        #region Core
+
+        private TStep ExecuteCore(TStep from, TStep goal, Func<TStep, IEnumerable<TStep>> nextStepsFactory, IComparer<TKey> c, IEqualityComparer<TKey> ec, bool closestIfNoSolution)
+        {
             if (from == null) throw new ArgumentNullException("from");
             if (goal == null) throw new ArgumentNullException("goal");
             if (nextStepsFactory == null) throw new ArgumentNullException("nextStepsFactory");
@@ -126,18 +164,17 @@ namespace AlgorithmForce.HeuristicSuite
                 Debug.WriteLine("-------");
 #endif
                 var current = open.First();
-                
-                open.RemoveAt(0);
-                closed.Add(current.Key, current);
 
                 if (closed.Comparer.Equals(current.Key, goal.Key))
                     return current;
-                
+
+                open.RemoveAt(0);
+                closed.Add(current.Key, current);
+
                 foreach (var next in nextStepsFactory(current))
                 {
-                    if (next == null) continue;
-                    if (closed.ContainsKey(next.Key)) continue;
                     if (!IsValidStep(next)) continue;
+                    if (closed.ContainsKey(next.Key)) continue;
                     if (!open.Any(step => closed.Comparer.Equals(next.Key, step.Key)))
                     {
                         next.PreviousStep = current;
@@ -148,12 +185,17 @@ namespace AlgorithmForce.HeuristicSuite
                 }
                 open.Sort(sc);
             }
-            return default(TStep); // no solution
+
+            return closestIfNoSolution ? closed.OrderBy(kvp => kvp.Key, c).FirstOrDefault().Value : default(TStep); // no solution
         }
+
+        #endregion
+
+        #region Others
 
         public bool IsValidStep(TStep step)
         {
-            return step.IsValidStep && this._stepValidityChecker(step);
+            return step != null && step.IsValidStep && this._stepValidityChecker(step);
         }
 
         #endregion
