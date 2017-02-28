@@ -2,19 +2,21 @@
 
 ### Overview
 
-**Heuristic Suite** is an experimental implementation of A\* algorithm in generic programming. The project is aimed to define an engine from abstract perspective that can be applied to any puzzle, as long as the puzzle can be resolved with the algorithm. The implementation takes advantages of built-in .Net Framework comparison mechanism such as [IComparer(T)](https://msdn.microsoft.com/en-us/library/8ehhxeaf.aspx) and [IEqualityComparer(T)](https://msdn.microsoft.com/en-us/library/ms132151.aspx) to create great compatibility with .Net development.
+**Heuristic Suite** is an experimental implementation of A\* algorithm in generic programming. The project is aimed to define an engine from abstract perspective that can be applied to any puzzle, as long as the puzzle can be resolved with the algorithm. The implementation takes advantages of built-in .NET Framework comparison mechanism such as [IComparer(T)](https://msdn.microsoft.com/en-us/library/8ehhxeaf.aspx) and [IEqualityComparer(T)](https://msdn.microsoft.com/en-us/library/ms132151.aspx) to create great compatibility with [.NET Standard](https://github.com/dotnet/standard).
 
 ### Basic Guide
 
 In order to apply the engine to the puzzle, following implemenations are needed:
 
-1. **The type of step in the puzzle.** The type will be required to implement [IStep(TKey)](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/IStep.cs) interface where `Key` is the property that the engine checks the equality between two steps.
+1. **The type of step in the puzzle.** The type will be required to implement [IStep(TKey)](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/IStep.cs) interface where `Key` is the property referred by the engine to check the equality between two steps.
 
 2. **The method to compare steps.** Steps are compared to each other by `Key` property to determine which has better score. The comparison can be done by implementing [IComparable(TKey)](https://msdn.microsoft.com/en-us/library/4d7sx9hd.aspx) or providing [IComparer(TKey)](https://msdn.microsoft.com/en-us/library/8ehhxeaf.aspx) instance.
 
 3. **The method to get next steps from current step.** Next step information can be given by implementing [INextStepFactory(TKey, TStep)](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/IStep.cs) interface, or providing [NextStepFactory](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/AStar.cs#L29) delegate.
 
-Now we can [Execute](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/AStar.cs#L87) the engine with the `from` and `goal` steps to get the solution. If the solution exists, you can [Enumerate](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/StepExtensions.cs#L7) each of steps, or [Reverse](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/StepExtensions.cs#L19) them before the enumeration starts.
+Now we can [Execute](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/AStar.cs#L87) the engine with the `from` and `goal` steps to get the solution. If the solution exists, you can [Enumerate](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/StepExtensions.cs#L7) each of steps, or [Reverse](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/StepExtensions.cs#L19) them before the enumeration starts. 
+
+You can also [find the closest solution](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/AStar.cs#L116) in case the exact solution does not exist. 
 
 ### Examples
 
@@ -39,4 +41,4 @@ More advanced options will be added in future version.
 
 ### Platform
 
-The project currently targets .Net Core only.
+The project currently targets .NET Core only.
