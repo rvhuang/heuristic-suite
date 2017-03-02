@@ -9,7 +9,7 @@ The example demonstrates how to solve 8-puzzle with A\* algorithm and to apply t
 
 #### Define Board State 
 
-In this puzzle, the step is defined with `BoardState` class.
+In this example, the step is defined with `BoardState` class as following syntax.
 
 ```cs
 
@@ -22,7 +22,7 @@ In this puzzle, the step is defined with `BoardState` class.
     }
 ```
 
-Square positions on the board are stored in an array of [Point2DInt32](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/Point2DInt32.cs) structure, where array index is the square number and index zero is the empty square. A board with numbers [2, 8, 3], [1, 6, 4] and [7, (empty), 5] is equivalent to the array in following code snippet:
+Square positions on the board are stored in an array of [Point2DInt32](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/Point2DInt32.cs) structure, where array index is the square number and index zero is the empty square. An example board with numbers [2, 8, 3], [1, 6, 4] and [7, (empty), 5] is equivalent to the array in following code snippet:
 
 ```cs
 
@@ -82,7 +82,7 @@ In order to compare two board states to determine the closer one to the goal, we
 
 #### Get Next Steps From Current
 
-To get next board states from current state, we need to exchange the position of empty square, and the position of square that the empty square will move to. Therefore, we implement following methods in `BoardState` class:
+To get next board states from current state, we need to exchange the position of empty square and the position of square that the empty square will move to. Therefore, we implement following methods in `BoardState` class:
 
 ```cs
 
