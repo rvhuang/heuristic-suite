@@ -2,11 +2,11 @@
 
 ### Overview
 
-**Heuristic Suite** is an experimental implementation of A\* algorithm in generic programming. The project is aimed to define an engine from abstract perspective that can be applied to any puzzle, as long as the puzzle can be resolved with the algorithm. The implementation takes advantages of built-in .NET Framework comparison mechanism such as [IComparer(T)](https://msdn.microsoft.com/en-us/library/8ehhxeaf.aspx) and [IEqualityComparer(T)](https://msdn.microsoft.com/en-us/library/ms132151.aspx) to create great compatibility with [.NET Standard](https://github.com/dotnet/standard).
+**Heuristic Suite** is an experimental implementation of A\* algorithm in generic programming. The project is aimed to provide an infrastructure from abstract perspective that can be applied to any puzzle - as long as the puzzle can be resolved with the algorithm. The implementation takes advantages of built-in .NET Framework comparison mechanism such as [IComparer(T)](https://msdn.microsoft.com/en-us/library/8ehhxeaf.aspx) and [IEqualityComparer(T)](https://msdn.microsoft.com/en-us/library/ms132151.aspx) to create great compatibility with [.NET Standard](https://github.com/dotnet/standard) and entire .NET ecosystem.
 
 ### Basic Guide
 
-In order to apply the engine to the puzzle, following implemenations are needed:
+In order to apply the infrastructure to the puzzle, following implemenations are needed:
 
 1. **The type of step in the puzzle.** The type will be required to implement [IStep(TKey)](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/IStep.cs) interface where `Key` is the property referred by the engine to check the equality between two steps.
 
