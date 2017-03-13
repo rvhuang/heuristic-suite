@@ -27,30 +27,27 @@ namespace AlgorithmForce.Example.PathFinding
             
             while (true)
             {
-                // Compare two positions and the goal position with selected distance.
-                var comparer = default(IComparer<Point2DInt32>);
-
                 Console.WriteLine("Select comparer:");
                 Console.WriteLine("C)hebyshev Distance Comparer");
                 Console.WriteLine("E)uclidean Distance Comparer");
                 Console.WriteLine("M)anhattan Distance Comparer");
 
+                // Compare two positions and the goal position with selected distance.
                 switch (Console.ReadKey(true).Key)
                 {
                     case ConsoleKey.C:
-                        comparer = new ChebyshevDistanceComparer(goalPos);
+                        aStar.Comparer = new ChebyshevDistanceComparer(goalPos);
                         break;
 
                     case ConsoleKey.E:
-                        comparer = new EuclideanDistanceComparer(goalPos);
+                        aStar.Comparer = new EuclideanDistanceComparer(goalPos);
                         break;
 
                     case ConsoleKey.M:
-                        comparer = new ManhattanDistanceComparer(goalPos);
+                        aStar.Comparer = new ManhattanDistanceComparer(goalPos);
                         break;
 
-                    default:
-                        return;
+                    default: continue;
                 }
                 
                 var stepUnit = 1;
@@ -58,7 +55,7 @@ namespace AlgorithmForce.Example.PathFinding
                 var goal = new Step(goalPos, border, stepUnit);
 
                 // Get result and draw the map! 
-                var path = aStar.Execute(from, goal, comparer).Enumerate().ToArray();
+                var path = aStar.Execute(from, goal).Enumerate().ToArray();
                 
                 for (var y = 0; y < border.Y; y++)
                 {

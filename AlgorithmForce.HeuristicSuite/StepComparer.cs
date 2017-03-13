@@ -9,6 +9,11 @@ namespace AlgorithmForce.HeuristicSuite
         private readonly IComparer<TKey> _keyComparer;
         private readonly Comparison<TStep> _comparison;
 
+        public IComparer<TKey> KeyComparer
+        {
+            get { return this._keyComparer; }
+        }
+
         public StepComparer(IComparer<TKey> keyComparer, HeuristicFunctionPreference preference)
         {
             this._keyComparer = keyComparer == null ? Comparer<TKey>.Default : keyComparer;

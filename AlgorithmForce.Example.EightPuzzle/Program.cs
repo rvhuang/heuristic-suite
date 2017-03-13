@@ -36,10 +36,11 @@ namespace AlgorithmForce.Example.EightPuzzle
                 new Point2DInt32(0, 1), // square 8
             });
 
-            var comparer = new BoardStateComparer(goal.Positions);
             var aStar = new AStar<BoardState>();
 
-            foreach (var step in aStar.Execute(initial, goal, comparer).Reverse().Enumerate())
+            aStar.Comparer = new BoardStateComparer(goal.Positions);
+
+            foreach (var step in aStar.Execute(initial, goal).Reverse().Enumerate())
             {
                 Console.WriteLine("Step {0}:", step.Depth);
                 Console.WriteLine(step);

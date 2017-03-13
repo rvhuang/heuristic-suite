@@ -20,12 +20,13 @@ namespace AlgorithmForce.HeuristicSuite
         private IComparer<TKey> _comparer = Comparer<TKey>.Default;
         private IEqualityComparer<TKey> _equalityComparer = EqualityComparer<TKey>.Default;
 
-        private HeuristicFunctionPreference preference;
+        private HeuristicFunctionPreference preference = HeuristicFunctionPreference.Average;
+        private SolutionFindingMode mode = SolutionFindingMode.DefaultIfNotFound;
 
         #endregion
 
         #region Properties
-         
+
         public Func<TStep, IEnumerable<TStep>> NextStepsFactory
         {
             get { return this._nextStepsFactory; }
@@ -47,7 +48,7 @@ namespace AlgorithmForce.HeuristicSuite
         public IEqualityComparer<TKey> EqualityComparer
         {
             get { return this._equalityComparer; }
-            set { this._equalityComparer = value == null ? EqualityComparer<TKey>.Default : value ; }
+            set { this._equalityComparer = value == null ? EqualityComparer<TKey>.Default : value; }
         }
 
         public HeuristicFunctionPreference HeuristicFunctionPreference
@@ -57,6 +58,18 @@ namespace AlgorithmForce.HeuristicSuite
             {
                 if (Enum.IsDefined(typeof(HeuristicFunctionPreference), value))
                     this.preference = value;
+                else
+                    throw new ArgumentException("Not a defined value.", "HeuristicFunctionPreference");
+            }
+        }
+
+        public SolutionFindingMode FindingMode
+        {
+            get { return this.mode; }
+            set
+            {
+                if (Enum.IsDefined(typeof(SolutionFindingMode), value))
+                    this.mode = value;
                 else
                     throw new ArgumentException("Not a defined value.", "HeuristicFunctionPreference");
             }
@@ -86,63 +99,21 @@ namespace AlgorithmForce.HeuristicSuite
 
         public TStep Execute(TStep from, TStep goal)
         {
-            return this.Execute(from, goal, this._nextStepsFactory, this._comparer, this._equalityComparer);
+            return this.ExecuteCore(from, goal, this._nextStepsFactory, this._comparer, this._equalityComparer, this.mode);
         }
 
-        public TStep Execute(TStep from, TStep goal, Func<TStep, IEnumerable<TStep>> nextStepsFactory)
+        public TStep ExecuteWith(TStep from, TKey goalState)
         {
-            return this.Execute(from, goal, nextStepsFactory, this._comparer, this._equalityComparer);
-        }
+            if (goalState == null) throw new ArgumentNullException("goalState");
 
-        public TStep Execute(TStep from, TStep goal, IComparer<TKey> c)
-        {
-            return this.Execute(from, goal, this._nextStepsFactory, c, this._equalityComparer);
-        }
-
-        public TStep Execute(TStep from, TStep goal, Func<TStep, IEnumerable<TStep>> nextStepsFactory, IComparer<TKey> c)
-        {
-            return this.Execute(from, goal, nextStepsFactory, c, this._equalityComparer);
+            return this.ExecuteCore(from, new Step<TKey>(goalState), this._nextStepsFactory, this._comparer, this._equalityComparer, this.mode);
         }
         
-        public TStep Execute(TStep from, TStep goal, Func<TStep, IEnumerable<TStep>> nextStepsFactory, IComparer<TKey> c, IEqualityComparer<TKey> ec)
-        {
-            return this.ExecuteCore(from, goal, nextStepsFactory, c, ec, false);
-        }
-
-        #endregion
-
-        #region Find Closest
-
-        public TStep FindClosest(TStep from, TStep goal)
-        {
-            return this.FindClosest(from, goal, this._nextStepsFactory, this._comparer, this._equalityComparer);
-        }
-
-        public TStep FindClosest(TStep from, TStep goal, Func<TStep, IEnumerable<TStep>> nextStepsFactory)
-        {
-            return this.FindClosest(from, goal, nextStepsFactory, this._comparer, this._equalityComparer);
-        }
-
-        public TStep FindClosest(TStep from, TStep goal, IComparer<TKey> c)
-        {
-            return this.FindClosest(from, goal, this._nextStepsFactory, c, this._equalityComparer);
-        }
-
-        public TStep FindClosest(TStep from, TStep goal, Func<TStep, IEnumerable<TStep>> nextStepsFactory, IComparer<TKey> c)
-        {
-            return this.FindClosest(from, goal, nextStepsFactory, c, this._equalityComparer);
-        }
-
-        public TStep FindClosest(TStep from, TStep goal, Func<TStep, IEnumerable<TStep>> nextStepsFactory, IComparer<TKey> c, IEqualityComparer<TKey> ec)
-        {
-            return this.ExecuteCore(from, goal, nextStepsFactory, c, ec, true);
-        }
-
         #endregion
 
         #region Core
-
-        private TStep ExecuteCore(TStep from, TStep goal, Func<TStep, IEnumerable<TStep>> nextStepsFactory, IComparer<TKey> c, IEqualityComparer<TKey> ec, bool closestIfNoSolution)
+        
+        private TStep ExecuteCore(TStep from, IStep<TKey> goal, Func<TStep, IEnumerable<TStep>> nextStepsFactory, IComparer<TKey> c, IEqualityComparer<TKey> ec, SolutionFindingMode mode)
         {
             if (from == null) throw new ArgumentNullException("from");
             if (goal == null) throw new ArgumentNullException("goal");
@@ -166,7 +137,16 @@ namespace AlgorithmForce.HeuristicSuite
                 var current = open.First();
 
                 if (closed.Comparer.Equals(current.Key, goal.Key))
+                {
+                    if (goal is TStep)
+                    {
+                        goal.Depth = current.Depth;
+                        goal.PreviousStep = current.PreviousStep;
+
+                        return (TStep)goal;
+                    }
                     return current;
+                }
 
                 open.RemoveAt(0);
                 closed.Add(current.Key, current);
@@ -185,8 +165,18 @@ namespace AlgorithmForce.HeuristicSuite
                 }
                 open.Sort(sc);
             }
+            switch (mode)
+            {
+                case SolutionFindingMode.DefaultIfNotFound:
+                    return default(TStep);
 
-            return closestIfNoSolution ? closed.OrderBy(kvp => kvp.Key, c).FirstOrDefault().Value : default(TStep); // no solution
+                case SolutionFindingMode.ClosestIfNotFound:
+                    return closed.OrderBy(kvp => kvp.Key, sc.KeyComparer).FirstOrDefault().Value;
+
+                case SolutionFindingMode.LatestIfNotFound:
+                    return closed.LastOrDefault().Value;
+            }
+            return default(TStep);
         }
 
         #endregion
@@ -205,5 +195,14 @@ namespace AlgorithmForce.HeuristicSuite
         where TStep : IStep<TStep>
     {
 
+    }
+
+    public enum SolutionFindingMode
+    {
+        DefaultIfNotFound,
+
+        ClosestIfNotFound,
+
+        LatestIfNotFound,
     }
 }
