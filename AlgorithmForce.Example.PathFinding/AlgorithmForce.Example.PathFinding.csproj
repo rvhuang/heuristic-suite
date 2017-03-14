@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <DefineConstants>$(DefineConstants);NET_CORE</DefineConstants>
+    <DebugType>portable</DebugType>
+    <AssemblyName>AlgorithmForce.Example.PathFinding</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <PackageId>AlgorithmForce.Example.PathFinding</PackageId>
+    <PackageTargetFallback>$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
+    <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Update="MapData.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AlgorithmForce.HeuristicSuite\AlgorithmForce.HeuristicSuite.csproj" />
+  </ItemGroup>
+
+</Project>
