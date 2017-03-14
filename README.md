@@ -14,9 +14,7 @@ In order to apply the infrastructure to the puzzle, following implemenations are
 
 3. **The method to get next steps from current step.** Next step information can be given by implementing [INextStepFactory(TKey, TStep)](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/IStep.cs) interface, or providing [NextStepFactory](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/AStar.cs#L29) delegate.
 
-Now we can [Execute](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/AStar.cs#L87) the engine with the `from` and `goal` steps to get the solution. If the solution exists, you can [Enumerate](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/StepExtensions.cs#L7) each of steps, or [Reverse](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/StepExtensions.cs#L19) them before the enumeration starts. 
-
-You can also [find the closest solution](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/AStar.cs#L116) in case the exact solution does not exist. 
+Now we can [Execute](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/AStar.cs#L100) the engine with the `from` and `goal` steps to get the solution. If the solution exists, you can [Enumerate](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/StepExtensions.cs#L7) each of steps, or [Reverse](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/StepExtensions.cs#L19) them before the enumeration starts.
 
 ### Examples
 
@@ -35,7 +33,9 @@ More examples will be added in future.
 
 ### Advanced Options
 
-By changing [HeuristicFunctionPreference](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/AStar.cs#L53) property, we can give different priority to G(x) function, which is based on [Depth](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/IStep.cs#L11) and H(x) function, which is based on [Key](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/IStep.cs#L7) to adjust the heuristic function. The default value is `Average` which gives both functions same priority.
+* By changing [HeuristicFunctionPreference](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/AStar.cs#L54) property, different priorities can be given to G(x) function, which is based on [Depth](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/IStep.cs#L11) and H(x) function, which is based on [Key](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/IStep.cs#L7) to adjust the heuristic function. The default value is `Average` which gives both functions same priority.
+
+* Property [FindingMode](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/AStar.cs#L66) can decide what will be returned by `Execute` method if the solution is not found. The return value by default is `null`. However, it can be the closest solution to the goal, or the last solution evaluated by the algorithm. 
 
 More advanced options will be added in future version.
 
