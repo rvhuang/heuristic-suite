@@ -81,11 +81,17 @@ namespace AlgorithmForce.HeuristicSuite
 
         static AStar()
         {
+#if PORTABLE 
+            if (typeof(INextStepFactory<TKey, TStep>).GetTypeInfo().IsAssignableFrom(typeof(TStep).GetTypeInfo()))
+                DefaultNextStepFactory = step => (step as INextStepFactory<TKey, TStep>).GetNextSteps();
+            else
+                DefaultNextStepFactory = step => Enumerable.Empty<TStep>();
+#else
             if (typeof(INextStepFactory<TKey, TStep>).GetTypeInfo().IsAssignableFrom(typeof(TStep)))
                 DefaultNextStepFactory = step => (step as INextStepFactory<TKey, TStep>).GetNextSteps();
             else
                 DefaultNextStepFactory = step => Enumerable.Empty<TStep>();
-
+#endif
             DefaultStepValidityChecker = step => step.IsValidStep;
         }
 
@@ -108,11 +114,11 @@ namespace AlgorithmForce.HeuristicSuite
 
             return this.ExecuteCore(from, new Step<TKey>(goalState), this._nextStepsFactory, this._comparer, this._equalityComparer, this.mode);
         }
-        
+
         #endregion
 
         #region Core
-        
+
         private TStep ExecuteCore(TStep from, IStep<TKey> goal, Func<TStep, IEnumerable<TStep>> nextStepsFactory, IComparer<TKey> c, IEqualityComparer<TKey> ec, SolutionFindingMode mode)
         {
             if (from == null) throw new ArgumentNullException("from");
