@@ -17,46 +17,67 @@ namespace AlgorithmForce.Example.PathFinding
             var fromPos = mapData.Item1;
             var goalPos = mapData.Item2;
             var obstacles = mapData.Item3;
-            
-            // Initial the engine. 
-            var aStar = new AStar<Point2DInt32, Step>();
-            // Tell the engine how to get next steps. 
-            // aStar.NextStepsFactory = step => step.GetNextSteps();
-            // Tell the engine how to check if there is any obstacle in the position.
-            aStar.StepValidityChecker = step => !obstacles.Contains(step.Position);
-            
+
             while (true)
             {
-                Console.WriteLine("Select comparer:");
-                Console.WriteLine("C)hebyshev Distance Comparer");
-                Console.WriteLine("E)uclidean Distance Comparer");
-                Console.WriteLine("M)anhattan Distance Comparer");
+                var engine = default(HeuristicSearch<Point2DInt32, Step>);
 
-                // Compare two positions and the goal position with selected distance.
-                switch (Console.ReadKey(true).Key)
+                Console.WriteLine("A)-Star Search");
+                Console.WriteLine("B)est First Search");
+                Console.Write("Select algorithm: ");
+
+                // Initial the engine.
+                switch (Console.ReadKey().Key)
                 {
-                    case ConsoleKey.C:
-                        aStar.Comparer = new ChebyshevDistanceComparer(goalPos);
+                    case ConsoleKey.A:
+                        engine = new AStar<Point2DInt32, Step>();
                         break;
 
-                    case ConsoleKey.E:
-                        aStar.Comparer = new EuclideanDistanceComparer(goalPos);
-                        break;
-
-                    case ConsoleKey.M:
-                        aStar.Comparer = new ManhattanDistanceComparer(goalPos);
+                    case ConsoleKey.B:
+                        engine = new BestFirstSearch<Point2DInt32, Step>();
                         break;
 
                     default: continue;
                 }
-                
+
+                // Tell the engine how to get next steps. 
+                // engine.NextStepsFactory = step => step.GetNextSteps();
+                // Tell the engine how to check if there is any obstacle in the position.
+                engine.StepValidityChecker = step => !obstacles.Contains(step.Position);
+
+                Console.WriteLine();
+                Console.WriteLine("C)hebyshev Distance Comparer");
+                Console.WriteLine("E)uclidean Distance Comparer");
+                Console.WriteLine("M)anhattan Distance Comparer");
+                Console.Write("Select comparer: ");
+
+                // Compare two positions and the goal position with selected distance.
+                switch (Console.ReadKey().Key)
+                {
+                    case ConsoleKey.C:
+                        engine.Comparer = new ChebyshevDistanceComparer(goalPos);
+                        break;
+
+                    case ConsoleKey.E:
+                        engine.Comparer = new EuclideanDistanceComparer(goalPos);
+                        break;
+
+                    case ConsoleKey.M:
+                        engine.Comparer = new ManhattanDistanceComparer(goalPos);
+                        break;
+
+                    default: continue;
+                }
+
                 var stepUnit = 1;
                 var from = new Step(fromPos, border, stepUnit);
                 var goal = new Step(goalPos, border, stepUnit);
 
                 // Get result and draw the map! 
-                var path = aStar.Execute(from, goal).Enumerate().ToArray();
-                
+                var path = engine.Execute(from, goal).Enumerate().ToArray();
+
+                Console.WriteLine();
+
                 for (var y = 0; y < border.Y; y++)
                 {
                     for (var x = 0; x < border.X; x++)
@@ -79,9 +100,7 @@ namespace AlgorithmForce.Example.PathFinding
 
                 Console.WriteLine("Total steps: {0}. Press any key to continue or 'X' to exit...", path.Count());
 
-                if (Console.ReadKey(true).Key != ConsoleKey.X)
-                    Console.Clear();
-                else
+                if (Console.ReadKey(true).Key == ConsoleKey.X)
                     break;
             }
         }

@@ -49,6 +49,9 @@
     <Compile Include="..\AlgorithmForce.HeuristicSuite\EuclideanDistanceComparer.cs">
       <Link>EuclideanDistanceComparer.cs</Link>
     </Compile>
+    <Compile Include="..\AlgorithmForce.HeuristicSuite\HeuristicSearch.cs">
+      <Link>HeuristicSearch.cs</Link>
+    </Compile>
     <Compile Include="..\AlgorithmForce.HeuristicSuite\IGoalOrientedComparer.cs">
       <Link>IGoalOrientedComparer.cs</Link>
     </Compile>

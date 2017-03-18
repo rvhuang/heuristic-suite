@@ -1,67 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
+
+#if DEBUG
+using System.Diagnostics;
+#endif
 
 namespace AlgorithmForce.HeuristicSuite
 {
-    public class AStar<TKey, TStep>
+    public class AStar<TKey, TStep> : HeuristicSearch<TKey, TStep>
         where TStep : IStep<TKey>
     {
         #region Fields
 
-        public static readonly Func<TStep, IEnumerable<TStep>> DefaultNextStepFactory;
-        public static readonly Func<TStep, bool> DefaultStepValidityChecker;
-
-        private Func<TStep, IEnumerable<TStep>> _nextStepsFactory = DefaultNextStepFactory;
-        private Func<TStep, bool> _stepValidityChecker = DefaultStepValidityChecker;
-
-        private IComparer<TKey> _comparer = Comparer<TKey>.Default;
-        private IEqualityComparer<TKey> _equalityComparer = EqualityComparer<TKey>.Default;
-
-        private HeuristicFunctionPreference preference = HeuristicFunctionPreference.Average;
         private SolutionFindingMode mode = SolutionFindingMode.DefaultIfNotFound;
 
         #endregion
 
         #region Properties
-
-        public Func<TStep, IEnumerable<TStep>> NextStepsFactory
-        {
-            get { return this._nextStepsFactory; }
-            set { this._nextStepsFactory = value == null ? DefaultNextStepFactory : value; }
-        }
-
-        public Func<TStep, bool> StepValidityChecker
-        {
-            get { return this._stepValidityChecker; }
-            set { this._stepValidityChecker = value == null ? DefaultStepValidityChecker : value; }
-        }
-
-        public IComparer<TKey> Comparer
-        {
-            get { return this._comparer; }
-            set { this._comparer = value == null ? Comparer<TKey>.Default : value; }
-        }
-
-        public IEqualityComparer<TKey> EqualityComparer
-        {
-            get { return this._equalityComparer; }
-            set { this._equalityComparer = value == null ? EqualityComparer<TKey>.Default : value; }
-        }
-
-        public HeuristicFunctionPreference HeuristicFunctionPreference
-        {
-            get { return this.preference; }
-            set
-            {
-                if (Enum.IsDefined(typeof(HeuristicFunctionPreference), value))
-                    this.preference = value;
-                else
-                    throw new ArgumentException("Not a defined value.", "HeuristicFunctionPreference");
-            }
-        }
 
         public SolutionFindingMode FindingMode
         {
@@ -71,7 +27,7 @@ namespace AlgorithmForce.HeuristicSuite
                 if (Enum.IsDefined(typeof(SolutionFindingMode), value))
                     this.mode = value;
                 else
-                    throw new ArgumentException("Not a defined value.", "HeuristicFunctionPreference");
+                    throw new ArgumentException("Not a defined value.", "SolutionFindingMode");
             }
         }
 
@@ -79,59 +35,21 @@ namespace AlgorithmForce.HeuristicSuite
 
         #region Constructor
 
-        static AStar()
-        {
-#if PORTABLE 
-            if (typeof(INextStepFactory<TKey, TStep>).GetTypeInfo().IsAssignableFrom(typeof(TStep).GetTypeInfo()))
-                DefaultNextStepFactory = step => (step as INextStepFactory<TKey, TStep>).GetNextSteps();
-            else
-                DefaultNextStepFactory = step => Enumerable.Empty<TStep>();
-#else
-            if (typeof(INextStepFactory<TKey, TStep>).GetTypeInfo().IsAssignableFrom(typeof(TStep)))
-                DefaultNextStepFactory = step => (step as INextStepFactory<TKey, TStep>).GetNextSteps();
-            else
-                DefaultNextStepFactory = step => Enumerable.Empty<TStep>();
-#endif
-            DefaultStepValidityChecker = step => step.IsValidStep;
-        }
-
-        public AStar()
-        {
-        }
-
-        #endregion
-
-        #region Execute 
-
-        public TStep Execute(TStep from, TStep goal)
-        {
-            return this.ExecuteCore(from, goal, this._nextStepsFactory, this._comparer, this._equalityComparer, this.mode);
-        }
-
-        public TStep ExecuteWith(TStep from, TKey goalState)
-        {
-            if (goalState == null) throw new ArgumentNullException("goalState");
-
-            return this.ExecuteCore(from, new Step<TKey>(goalState), this._nextStepsFactory, this._comparer, this._equalityComparer, this.mode);
-        }
+        public AStar() { }
 
         #endregion
 
         #region Core
 
-        private TStep ExecuteCore(TStep from, IStep<TKey> goal, Func<TStep, IEnumerable<TStep>> nextStepsFactory, IComparer<TKey> c, IEqualityComparer<TKey> ec, SolutionFindingMode mode)
+        protected override TStep ExecuteCore(TStep from, IStep<TKey> goal)
         {
-            if (from == null) throw new ArgumentNullException("from");
-            if (goal == null) throw new ArgumentNullException("goal");
-            if (nextStepsFactory == null) throw new ArgumentNullException("nextStepsFactory");
-
-            var sc = new StepComparer<TKey, TStep>(c, this.preference);
+            var sc = base.GetStepComparer();
             var open = new List<TStep>();
-            var closed = new Dictionary<TKey, TStep>(ec);
+            var closed = new Dictionary<TKey, TStep>(base.EqualityComparer);
 
             open.Add(from);
 
-            while (open.Count > 0)
+            while (open.Any())
             {
 #if DEBUG
                 Debug.WriteLine("Open:");
@@ -141,15 +59,14 @@ namespace AlgorithmForce.HeuristicSuite
                 Debug.WriteLine("-------");
 #endif
                 var current = open.First();
+                var hasNext = false;
 
-                if (closed.Comparer.Equals(current.Key, goal.Key))
+                if (base.EqualityComparer.Equals(current.Key, goal.Key))
                 {
                     if (goal is TStep)
                     {
                         goal.Depth = current.Depth;
                         goal.PreviousStep = current.PreviousStep;
-
-                        return (TStep)goal;
                     }
                     return current;
                 }
@@ -157,41 +74,33 @@ namespace AlgorithmForce.HeuristicSuite
                 open.RemoveAt(0);
                 closed.Add(current.Key, current);
 
-                foreach (var next in nextStepsFactory(current))
+                foreach (var next in base.NextStepsFactory(current))
                 {
                     if (!IsValidStep(next)) continue;
                     if (closed.ContainsKey(next.Key)) continue;
-                    if (!open.Any(step => closed.Comparer.Equals(next.Key, step.Key)))
+                    if (!open.Any(step => base.EqualityComparer.Equals(next.Key, step.Key)))
                     {
                         next.PreviousStep = current;
                         next.Depth = current.Depth + 1;
 
                         open.Add(next);
+                        hasNext = true;
                     }
                 }
-                open.Sort(sc);
+                if (hasNext) open.Sort(sc);
             }
-            switch (mode)
+            switch (this.mode)
             {
                 case SolutionFindingMode.DefaultIfNotFound:
                     return default(TStep);
-
+                    
                 case SolutionFindingMode.ClosestIfNotFound:
-                    return closed.OrderBy(kvp => kvp.Key, sc.KeyComparer).FirstOrDefault().Value;
+                    return closed.OrderBy(kvp => kvp.Key, base.Comparer).FirstOrDefault().Value;
 
                 case SolutionFindingMode.LatestIfNotFound:
-                    return closed.LastOrDefault().Value;
+                    return closed.OrderBy(kvp => kvp.Value, sc).FirstOrDefault().Value;
             }
             return default(TStep);
-        }
-
-        #endregion
-
-        #region Others
-
-        public bool IsValidStep(TStep step)
-        {
-            return step != null && step.IsValidStep && this._stepValidityChecker(step);
         }
 
         #endregion
