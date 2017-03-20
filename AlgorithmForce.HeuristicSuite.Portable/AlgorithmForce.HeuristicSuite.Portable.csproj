@@ -40,6 +40,9 @@
     <Compile Include="..\AlgorithmForce.HeuristicSuite\AStar.cs">
       <Link>AStar.cs</Link>
     </Compile>
+    <Compile Include="..\AlgorithmForce.HeuristicSuite\BestFirstSearch.cs">
+      <Link>BestFirstSearch.cs</Link>
+    </Compile>
     <Compile Include="..\AlgorithmForce.HeuristicSuite\ChebyshevDistanceComparer.cs">
       <Link>ChebyshevDistanceComparer.cs</Link>
     </Compile>
@@ -49,6 +52,9 @@
     <Compile Include="..\AlgorithmForce.HeuristicSuite\EuclideanDistanceComparer.cs">
       <Link>EuclideanDistanceComparer.cs</Link>
     </Compile>
+    <Compile Include="..\AlgorithmForce.HeuristicSuite\GoalOrientedStepComparer.cs">
+      <Link>GoalOrientedStepComparer.cs</Link>
+    </Compile>
     <Compile Include="..\AlgorithmForce.HeuristicSuite\HeuristicSearch.cs">
       <Link>HeuristicSearch.cs</Link>
     </Compile>
@@ -57,6 +63,9 @@
     </Compile>
     <Compile Include="..\AlgorithmForce.HeuristicSuite\IStep.cs">
       <Link>IStep.cs</Link>
+    </Compile>
+    <Compile Include="..\AlgorithmForce.HeuristicSuite\IterativeDeepeningAStar.cs">
+      <Link>IterativeDeepeningAStar.cs</Link>
     </Compile>
     <Compile Include="..\AlgorithmForce.HeuristicSuite\ManhattanDistanceComparer.cs">
       <Link>ManhattanDistanceComparer.cs</Link>

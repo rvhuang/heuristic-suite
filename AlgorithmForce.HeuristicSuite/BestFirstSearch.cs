@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace AlgorithmForce.HeuristicSuite
@@ -7,7 +6,7 @@ namespace AlgorithmForce.HeuristicSuite
     public class BestFirstSearch<TKey, TStep> : HeuristicSearch<TKey, TStep>
         where TStep : IStep<TKey>
     {
-        protected override TStep ExecuteCore(TStep from, IStep<TKey> goal)
+        protected override TStep ExecuteCore(TStep from, IStep<TKey> goal, IComparer<TKey> c)
         {
             var visited = new HashSet<TKey>(base.EqualityComparer);
             var nextSteps = new List<TStep>();
@@ -21,11 +20,9 @@ namespace AlgorithmForce.HeuristicSuite
 
                 if (base.EqualityComparer.Equals(best.Key, goal.Key))
                 {
-                    if (goal is TStep)
-                    {
-                        goal.Depth = best.Depth;
-                        goal.PreviousStep = best.PreviousStep;
-                    }
+                    goal.Depth = best.Depth;
+                    goal.PreviousStep = best.PreviousStep;
+
                     return best;
                 }
                 nextSteps.RemoveAt(0);
@@ -41,9 +38,14 @@ namespace AlgorithmForce.HeuristicSuite
                     nextSteps.Add(next);
                     hasNext = true;
                 }
-                if (hasNext) nextSteps.Sort((a, b) => base.Comparer.Compare(a.Key, b.Key));
+                if (hasNext) nextSteps.Sort((a, b) => c.Compare(a.Key, b.Key));
             }
             return default(TStep);
         }
+    }
+
+    public class BestFirstSearch<TStep> : BestFirstSearch<TStep, TStep>
+        where TStep : IStep<TStep>
+    {
     }
 }

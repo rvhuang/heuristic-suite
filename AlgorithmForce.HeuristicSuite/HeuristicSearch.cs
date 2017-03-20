@@ -15,8 +15,7 @@ namespace AlgorithmForce.HeuristicSuite
 
         private Func<TStep, IEnumerable<TStep>> _nextStepsFactory = DefaultNextStepFactory;
         private Func<TStep, bool> _stepValidityChecker = DefaultStepValidityChecker;
-
-        private IComparer<TKey> _comparer = Comparer<TKey>.Default;
+        
         private IEqualityComparer<TKey> _equalityComparer = EqualityComparer<TKey>.Default;
 
         private HeuristicFunctionPreference preference = HeuristicFunctionPreference.Average;
@@ -36,13 +35,7 @@ namespace AlgorithmForce.HeuristicSuite
             get { return this._stepValidityChecker; }
             set { this._stepValidityChecker = value == null ? DefaultStepValidityChecker : value; }
         }
-
-        public IComparer<TKey> Comparer
-        {
-            get { return this._comparer; }
-            set { this._comparer = value == null ? Comparer<TKey>.Default : value; }
-        }
-
+        
         public IEqualityComparer<TKey> EqualityComparer
         {
             get { return this._equalityComparer; }
@@ -87,21 +80,33 @@ namespace AlgorithmForce.HeuristicSuite
 
         public TStep Execute(TStep from, TStep goal)
         {
-            return this.ExecuteCore(from, goal);
+            return this.ExecuteCore(from, goal, Comparer<TKey>.Default);
         }
 
         public TStep ExecuteWith(TStep from, TKey goalState)
         {
             if (goalState == null) throw new ArgumentNullException("goalState");
 
-            return this.ExecuteCore(from, new Step<TKey>(goalState));
+            return this.ExecuteCore(from, new Step<TKey>(goalState), Comparer<TKey>.Default);
+        }
+
+        public TStep Execute(TStep from, TStep goal, IComparer<TKey> comparer)
+        {
+            return this.ExecuteCore(from, goal, comparer);
+        }
+
+        public TStep ExecuteWith(TStep from, TKey goalState, IComparer<TKey> comparer)
+        {
+            if (goalState == null) throw new ArgumentNullException("goalState");
+
+            return this.ExecuteCore(from, new Step<TKey>(goalState), comparer);
         }
 
         #endregion
 
         #region To Be Implemented
 
-        protected abstract TStep ExecuteCore(TStep from, IStep<TKey> goal);
+        protected abstract TStep ExecuteCore(TStep from, IStep<TKey> goal, IComparer<TKey> c);
 
         #endregion
 
@@ -109,12 +114,27 @@ namespace AlgorithmForce.HeuristicSuite
 
         protected bool IsValidStep(TStep step)
         {
-            return step != null && step.IsValidStep && this._stepValidityChecker(step);
+            if (step == null)
+                return false;
+
+            if (step.PreviousStep != null && this._equalityComparer.Equals(step.Key, step.PreviousStep.Key))
+                return false;
+
+            if (!step.IsValidStep)
+                return false;
+
+            if (!this._stepValidityChecker(step))
+                return false;
+
+            return true;
         }
 
-        protected virtual IComparer<TStep> GetStepComparer()
+        protected virtual IComparer<TStep> GetStepComparer(IComparer<TKey> c)
         {
-            return new StepComparer<TKey, TStep>(this._comparer, this.preference);
+            if (c is IGoalOrientedComparer<TKey>)
+                return new GoalOrientedStepComparer<TKey, TStep>(c as IGoalOrientedComparer<TKey>, this.preference);
+            else
+                return new StepComparer<TKey, TStep>(c, this.preference);
         }
 
         #endregion

@@ -41,9 +41,9 @@ namespace AlgorithmForce.HeuristicSuite
 
         #region Core
 
-        protected override TStep ExecuteCore(TStep from, IStep<TKey> goal)
+        protected override TStep ExecuteCore(TStep from, IStep<TKey> goal, IComparer<TKey> c)
         {
-            var sc = base.GetStepComparer();
+            var sc = base.GetStepComparer(c);
             var open = new List<TStep>();
             var closed = new Dictionary<TKey, TStep>(base.EqualityComparer);
 
@@ -63,11 +63,9 @@ namespace AlgorithmForce.HeuristicSuite
 
                 if (base.EqualityComparer.Equals(current.Key, goal.Key))
                 {
-                    if (goal is TStep)
-                    {
-                        goal.Depth = current.Depth;
-                        goal.PreviousStep = current.PreviousStep;
-                    }
+                    goal.Depth = current.Depth;
+                    goal.PreviousStep = current.PreviousStep;
+
                     return current;
                 }
 
@@ -95,7 +93,7 @@ namespace AlgorithmForce.HeuristicSuite
                     return default(TStep);
                     
                 case SolutionFindingMode.ClosestIfNotFound:
-                    return closed.OrderBy(kvp => kvp.Key, base.Comparer).FirstOrDefault().Value;
+                    return closed.OrderBy(kvp => kvp.Key, c).FirstOrDefault().Value;
 
                 case SolutionFindingMode.LatestIfNotFound:
                     return closed.OrderBy(kvp => kvp.Value, sc).FirstOrDefault().Value;

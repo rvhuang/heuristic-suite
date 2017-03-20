@@ -1,4 +1,6 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+
 namespace AlgorithmForce.HeuristicSuite
 {
     public class EuclideanDistanceComparer : IGoalOrientedComparer<Point2DInt32>, IGoalOrientedComparer<Point2DInt64>
@@ -24,6 +26,16 @@ namespace AlgorithmForce.HeuristicSuite
         public EuclideanDistanceComparer(Point2DInt64 goal)
         {
             this.goal2dInt64 = goal;
+        }
+
+        public double GetScore(Point2DInt32 a)
+        {
+            return DistanceHelper.GetEuclideanDistance(a.X, a.Y, goal2dInt32.X, goal2dInt32.Y);
+        }
+
+        public double GetScore(Point2DInt64 a)
+        {
+            return DistanceHelper.GetEuclideanDistance(a.X, a.Y, goal2dInt64.X, goal2dInt64.Y);
         }
 
         public int Compare(Point2DInt32 a, Point2DInt32 b)

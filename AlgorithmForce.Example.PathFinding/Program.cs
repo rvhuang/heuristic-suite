@@ -13,18 +13,20 @@ namespace AlgorithmForce.Example.PathFinding
         {
             // Define map border and load map data.  
             var border = new Point2DInt32(20, 20);
-            var mapData = LoadMapData();
-            var fromPos = mapData.Item1;
-            var goalPos = mapData.Item2;
-            var obstacles = mapData.Item3;
 
             while (true)
             {
+                var mapData = LoadMapData();
+                var fromPos = mapData.Item1;
+                var goalPos = mapData.Item2;
+                var obstacles = mapData.Item3;
                 var engine = default(HeuristicSearch<Point2DInt32, Step>);
+                var comparer = default(IComparer<Point2DInt32>);
 
                 Console.WriteLine("A)-Star Search");
                 Console.WriteLine("B)est First Search");
-                Console.Write("Select algorithm: ");
+                Console.WriteLine("I)terative Deepening AStar Search");
+                Console.Write("Select an algorithm: ");
 
                 // Initial the engine.
                 switch (Console.ReadKey().Key)
@@ -35,6 +37,10 @@ namespace AlgorithmForce.Example.PathFinding
 
                     case ConsoleKey.B:
                         engine = new BestFirstSearch<Point2DInt32, Step>();
+                        break;
+
+                    case ConsoleKey.I:
+                        engine = new IterativeDeepeningAStar<Point2DInt32, Step>();
                         break;
 
                     default: continue;
@@ -55,15 +61,15 @@ namespace AlgorithmForce.Example.PathFinding
                 switch (Console.ReadKey().Key)
                 {
                     case ConsoleKey.C:
-                        engine.Comparer = new ChebyshevDistanceComparer(goalPos);
+                        comparer = new ChebyshevDistanceComparer(goalPos);
                         break;
 
                     case ConsoleKey.E:
-                        engine.Comparer = new EuclideanDistanceComparer(goalPos);
+                        comparer = new EuclideanDistanceComparer(goalPos);
                         break;
 
                     case ConsoleKey.M:
-                        engine.Comparer = new ManhattanDistanceComparer(goalPos);
+                        comparer = new ManhattanDistanceComparer(goalPos);
                         break;
 
                     default: continue;
@@ -74,7 +80,7 @@ namespace AlgorithmForce.Example.PathFinding
                 var goal = new Step(goalPos, border, stepUnit);
 
                 // Get result and draw the map! 
-                var path = engine.Execute(from, goal).Enumerate().ToArray();
+                var path = engine.Execute(from, goal, comparer).Reverse().Enumerate().ToArray();
 
                 Console.WriteLine();
 

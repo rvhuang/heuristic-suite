@@ -26,6 +26,16 @@ namespace AlgorithmForce.HeuristicSuite
             this.goal2dInt64 = goal;
         }
 
+        public double GetScore(Point2DInt32 a)
+        {
+            return DistanceHelper.GetChebyshevDistance(a.X, a.Y, goal2dInt32.X, goal2dInt32.Y);
+        }
+
+        public double GetScore(Point2DInt64 a)
+        {
+            return DistanceHelper.GetChebyshevDistance(a.X, a.Y, goal2dInt64.X, goal2dInt64.Y);
+        }
+
         public int Compare(Point2DInt32 a, Point2DInt32 b)
         {
             var distanceA =
