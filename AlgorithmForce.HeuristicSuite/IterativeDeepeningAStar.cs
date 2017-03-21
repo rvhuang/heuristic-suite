@@ -43,10 +43,10 @@ namespace AlgorithmForce.HeuristicSuite
             
             while (counter <= max)
             {
-                var t = Search(from, bound, goal, new State(this, c));
+                var t = Search(from, bound, goal, new RecursionState(this, c));
 
-                if (t.Flag == Flag.Found) return t.Step;
-                if (t.Flag == Flag.NotFound) return default(TStep);
+                if (t.Flag == RecursionFlag.Found) return t.Step;
+                if (t.Flag == RecursionFlag.NotFound) return default(TStep);
 
                 bound = t.Step;
                 counter++;
@@ -58,17 +58,17 @@ namespace AlgorithmForce.HeuristicSuite
         
         #region Core
 
-        private Result Search(TStep node, TStep bound, IStep<TKey> goal, State state)
+        private RecursionResult Search(TStep node, TStep bound, IStep<TKey> goal, RecursionState state)
         {
             if (state.StepComparer.Compare(node, bound) > 0)
-                return Result.Create(Flag.InProgress, node);
+                return RecursionResult.Create(RecursionFlag.InProgress, node);
 
             if (base.EqualityComparer.Equals(node.Key, goal.Key))
             {
                 goal.Depth = node.Depth;
                 goal.PreviousStep = node.PreviousStep;
 
-                return Result.Create(Flag.Found, node);
+                return RecursionResult.Create(RecursionFlag.Found, node);
             }
 
             var min = default(TStep);
@@ -78,93 +78,18 @@ namespace AlgorithmForce.HeuristicSuite
             {
                 var t = Search(succ, bound, goal, state);
 
-                if (t.Flag == Flag.Found) return t;
-                if (t.Flag == Flag.NotFound) continue;
+                if (t.Flag == RecursionFlag.Found) return t;
+                if (t.Flag == RecursionFlag.NotFound) continue;
                 if (!hasMin || state.StepComparer.Compare(t.Step, min) < 0)
                 {
                     min = t.Step;
                     hasMin = true;
                 }
             }
-            return Result.Create(hasMin ? Flag.InProgress : Flag.NotFound, min);
+            return RecursionResult.Create(hasMin ? RecursionFlag.InProgress : RecursionFlag.NotFound, min);
         }
 
-        #endregion
-
-        #region Others
-
-        class State
-        {
-            private readonly HeuristicSearch<TKey, TStep> owner;
-            private readonly IComparer<TStep> sc;
-            private readonly ISet<TKey> visited;
-            
-            public IComparer<TStep> StepComparer
-            {
-                get { return this.sc; }
-            }
-
-            public State(HeuristicSearch<TKey, TStep> owner, IComparer<TKey> c)
-            {
-                this.owner = owner;
-                this.sc = owner.GetStepComparer(c);
-                this.visited = new HashSet<TKey>(owner.EqualityComparer);
-            }
-
-            public IEnumerable<TStep> GetNextSteps(TStep node)
-            {
-                foreach (var succ in this.owner.NextStepsFactory(node))
-                {
-                    if (!owner.IsValidStep(succ)) continue;
-                    if (!this.visited.Add(succ.Key)) continue;
-#if DEBUG
-                    Debug.WriteLine("({0}) Depth: {1}\t Step: {2}\t", nameof(GetNextSteps), node.Depth + 1, succ.Key);
-#endif
-                    succ.Depth = node.Depth + 1;
-                    succ.PreviousStep = node;
-
-                    yield return succ;
-                }
-            }
-        }
-
-        enum Flag
-        {
-            Found,
-
-            NotFound,
-
-            InProgress,
-        }
-        
-        struct Result
-        {
-            public Flag Flag
-            {
-                get; private set;
-            }
-
-            public TStep Step
-            {
-                get; private set;
-            }
-
-            public static Result Create(Flag flag, TStep step)
-            {
-#if DEBUG
-                Debug.WriteLine("({0}) Step: {1}\t Prev: {2}\t Flag: {3}", 
-                    nameof(Result), step, step != null ? step.PreviousStep : step, flag);
-#endif
-                return new Result() { Flag = flag, Step = step };
-            }
-
-            public override string ToString()
-            {
-                return string.Format("Step: {0}\t Flag: {1}", this.Step, this.Flag);
-            }
-        }
-
-        #endregion
+        #endregion 
     }
 
     public class IterativeDeepeningAStar<TStep> : IterativeDeepeningAStar<TStep, TStep>
