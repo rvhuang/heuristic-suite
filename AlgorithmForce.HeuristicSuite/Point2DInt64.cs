@@ -75,5 +75,19 @@ namespace AlgorithmForce.HeuristicSuite
         }
 
         #endregion
+
+        #region Operators
+
+        public static bool operator ==(Point2DInt64 a, Point2DInt64 b)
+        {
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(Point2DInt64 a, Point2DInt64 b)
+        {
+            return !a.Equals(b);
+        }
+
+        #endregion
     }
 }

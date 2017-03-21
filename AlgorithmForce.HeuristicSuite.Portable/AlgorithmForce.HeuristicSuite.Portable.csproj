@@ -46,6 +46,9 @@
     <Compile Include="..\AlgorithmForce.HeuristicSuite\ChebyshevDistanceComparer.cs">
       <Link>ChebyshevDistanceComparer.cs</Link>
     </Compile>
+    <Compile Include="..\AlgorithmForce.HeuristicSuite\ComparerHelper.cs">
+      <Link>ComparerHelper.cs</Link>
+    </Compile>
     <Compile Include="..\AlgorithmForce.HeuristicSuite\DistanceHelper.cs">
       <Link>DistanceHelper.cs</Link>
     </Compile>
@@ -75,6 +78,9 @@
     </Compile>
     <Compile Include="..\AlgorithmForce.HeuristicSuite\Point2DInt64.cs">
       <Link>Point2DInt64.cs</Link>
+    </Compile>
+    <Compile Include="..\AlgorithmForce.HeuristicSuite\RecursiveBestFirstSearch.cs">
+      <Link>RecursiveBestFirstSearch.cs</Link>
     </Compile>
     <Compile Include="..\AlgorithmForce.HeuristicSuite\SequenceEqualityComparer.cs">
       <Link>SequenceEqualityComparer.cs</Link>
