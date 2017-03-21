@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 #if DEBUG
 using System.Diagnostics;
@@ -6,7 +7,7 @@ using System.Diagnostics;
 
 namespace AlgorithmForce.HeuristicSuite
 {
-    public class IterativeDeepeningAStar<TKey, TStep> : HeuristicSearch<TKey, TStep>
+    public class RecursiveBestFirstSearch<TKey, TStep> : HeuristicSearch<TKey, TStep>
         where TStep : IStep<TKey>
     {
         #region Fields
@@ -25,38 +26,10 @@ namespace AlgorithmForce.HeuristicSuite
 
         #endregion
 
-        #region Constructor
-
-        public IterativeDeepeningAStar()
-        {
-            base.HeuristicFunctionPreference = HeuristicFunctionPreference.HFirst;
-        }
-
-        #endregion
-
-        #region Override
-
         protected override TStep ExecuteCore(TStep from, IStep<TKey> goal, IComparer<TKey> c)
         {
-            var counter = 0;
-            var bound = from;
-            
-            while (counter <= max)
-            {
-                var t = Search(from, bound, goal, new State(this, c));
-
-                if (t.Flag == Flag.Found) return t.Step;
-                if (t.Flag == Flag.NotFound) return default(TStep);
-
-                bound = t.Step;
-                counter++;
-            }
-            return default(TStep);
+            return Search(from, from, goal, new State(this, c)).Step;
         }
-
-        #endregion
-        
-        #region Core
 
         private Result Search(TStep node, TStep bound, IStep<TKey> goal, State state)
         {
@@ -71,25 +44,28 @@ namespace AlgorithmForce.HeuristicSuite
                 return Result.Create(Flag.Found, node);
             }
 
-            var min = default(TStep);
-            var hasMin = false;
-            
-            foreach (var succ in state.GetNextSteps(node))
+            var nexts = state.GetNextSteps(node).ToList();
+
+            if (!nexts.Any()) return Result.Create(Flag.NotFound, default(TStep));
+
+            while (true)
             {
-                var t = Search(succ, bound, goal, state);
+                nexts.Sort(state.StepComparer);
 
-                if (t.Flag == Flag.Found) return t;
-                if (t.Flag == Flag.NotFound) continue;
-                if (!hasMin || state.StepComparer.Compare(t.Step, min) < 0)
-                {
-                    min = t.Step;
-                    hasMin = true;
-                }
+                var best = nexts.ElementAt(0);
+
+                if (state.StepComparer.Compare(best, bound) > 0)
+                    return Result.Create(Flag.InProgress, best);
+
+                var alternative = state.StepComparer.Min(nexts.ElementAtOrDefault(1), bound);
+                var result = Search(best, alternative, goal, state);
+
+                if (result.Flag == Flag.NotFound || result.Flag == Flag.Found)
+                    return result;
+                
+                nexts.Add(result.Step);
             }
-            return Result.Create(hasMin ? Flag.InProgress : Flag.NotFound, min);
         }
-
-        #endregion
 
         #region Others
 
@@ -98,7 +74,7 @@ namespace AlgorithmForce.HeuristicSuite
             private readonly HeuristicSearch<TKey, TStep> owner;
             private readonly IComparer<TStep> sc;
             private readonly ISet<TKey> visited;
-            
+
             public IComparer<TStep> StepComparer
             {
                 get { return this.sc; }
@@ -132,11 +108,11 @@ namespace AlgorithmForce.HeuristicSuite
         {
             Found,
 
-            NotFound,
-
             InProgress,
+
+            NotFound,
         }
-        
+
         struct Result
         {
             public Flag Flag
@@ -152,7 +128,7 @@ namespace AlgorithmForce.HeuristicSuite
             public static Result Create(Flag flag, TStep step)
             {
 #if DEBUG
-                Debug.WriteLine("({0}) Step: {1}\t Prev: {2}\t Flag: {3}", 
+                Debug.WriteLine("({0}) Step: {1}\t Prev: {2}\t Flag: {3}",
                     nameof(Result), step, step != null ? step.PreviousStep : step, flag);
 #endif
                 return new Result() { Flag = flag, Step = step };
@@ -167,7 +143,7 @@ namespace AlgorithmForce.HeuristicSuite
         #endregion
     }
 
-    public class IterativeDeepeningAStar<TStep> : IterativeDeepeningAStar<TStep, TStep>
+    public class RecursiveBestFirstSearch<TStep> : RecursiveBestFirstSearch<TStep, TStep>
         where TStep : IStep<TStep>
     {
     }

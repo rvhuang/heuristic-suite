@@ -43,6 +43,7 @@ namespace AlgorithmForce.Example.EightPuzzle
                 Console.WriteLine("A)-Star Search");
                 Console.WriteLine("B)est First Search");
                 Console.WriteLine("I)terative Deepening AStar Search");
+                Console.WriteLine("R)ecursive Best First Search");
                 Console.Write("Select an algorithm: ");
 
                 // Initial the engine.
@@ -58,6 +59,10 @@ namespace AlgorithmForce.Example.EightPuzzle
 
                     case ConsoleKey.I:
                         engine = new IterativeDeepeningAStar<BoardState>();
+                        break;
+
+                    case ConsoleKey.R:
+                        engine = new RecursiveBestFirstSearch<BoardState>();
                         break;
 
                     default: continue;

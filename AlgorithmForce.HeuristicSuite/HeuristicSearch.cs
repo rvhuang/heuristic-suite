@@ -112,7 +112,7 @@ namespace AlgorithmForce.HeuristicSuite
 
         #region Others
 
-        protected bool IsValidStep(TStep step)
+        public bool IsValidStep(TStep step)
         {
             if (step == null)
                 return false;
@@ -129,7 +129,7 @@ namespace AlgorithmForce.HeuristicSuite
             return true;
         }
 
-        protected virtual IComparer<TStep> GetStepComparer(IComparer<TKey> c)
+        public virtual IComparer<TStep> GetStepComparer(IComparer<TKey> c)
         {
             if (c is IGoalOrientedComparer<TKey>)
                 return new GoalOrientedStepComparer<TKey, TStep>(c as IGoalOrientedComparer<TKey>, this.preference);
