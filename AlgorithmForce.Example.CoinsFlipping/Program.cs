@@ -21,7 +21,7 @@ namespace AlgorithmForce.Example.CoinsFlipping
             // true  -> head
             // false -> tail
             var goal = new bool[10] { true, true, true, true, true, true, true, true, true, true, };
-            var init = new bool[10] { true, false, true, false, true, true, false, true, false, true };
+            var init = new bool[10] { false, true, true, false, false, true, true, false, false, false };
 
             var engine = new AStar<bool[], Step<bool[]>>();
 
@@ -34,8 +34,9 @@ namespace AlgorithmForce.Example.CoinsFlipping
             {
                 var coins = step.Key;
 
-                Console.WriteLine("Step {0}: {1}", step.Depth, step.Depth == 0 ? "(Initial)" : string.Empty);
-                Console.WriteLine(string.Join(", ", coins.Select(coin => coin ? "Head" : "Tail")));
+                Console.Write("Step {0}: ", step.Depth);
+                Console.Write(string.Concat(coins.Select(coin => coin ? " H " : " T ")));
+                Console.WriteLine(" {0}", step.Depth == 0 ? "(Initial)" : string.Empty);
             }
             Console.ReadKey(true);
         }
