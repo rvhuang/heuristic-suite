@@ -11,7 +11,7 @@ Implemented algorithms:
 * Best First Search
 * Recursive Best First Search (RBFS)
 
-The implementation takes advantages of built-in .NET Framework comparison mechanism such as [IComparer(T)](https://msdn.microsoft.com/en-us/library/8ehhxeaf.aspx) and [IEqualityComparer(T)](https://msdn.microsoft.com/en-us/library/ms132151.aspx) to create great compatibility with [.NET Standard](https://github.com/dotnet/standard) and entire .NET ecosystem.
+The implementation takes advantages of built-in .NET Framework comparison mechanism such as [IComparer(T)](https://msdn.microsoft.com/en-us/library/8ehhxeaf.aspx) and [IEqualityComparer(T)](https://msdn.microsoft.com/en-us/library/ms132151.aspx) to create great compatibility with [.NET Standard](https://github.com/dotnet/standard) and entire .NET ecosystem. Source code can be easily brought to other platforms such as Unity and Xamarin. 
 
 
 ### Solving Puzzle with Algorithm 
