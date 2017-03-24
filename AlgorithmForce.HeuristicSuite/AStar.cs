@@ -87,11 +87,20 @@ namespace AlgorithmForce.HeuristicSuite
                 }
                 if (hasNext) open.Sort(sc);
             }
+            return HandleSolutionNotFound(closed, c, sc);
+        }
+
+        #endregion
+
+        #region Others
+
+        protected virtual TStep HandleSolutionNotFound(IDictionary<TKey, TStep> closed, IComparer<TKey> c, IComparer<TStep> sc)
+        {
             switch (this.mode)
             {
                 case SolutionFindingMode.DefaultIfNotFound:
                     return default(TStep);
-                    
+
                 case SolutionFindingMode.ClosestIfNotFound:
                     return closed.OrderBy(kvp => kvp.Key, c).FirstOrDefault().Value;
 
@@ -102,12 +111,12 @@ namespace AlgorithmForce.HeuristicSuite
         }
 
         #endregion
+
     }
 
-    public class AStar<TStep> : AStar<TStep, TStep>
-        where TStep : IStep<TStep>
+    public class AStar<TKey> : AStar<TKey, Step<TKey>>
     {
-
+        public AStar() { }
     }
 
     public enum SolutionFindingMode

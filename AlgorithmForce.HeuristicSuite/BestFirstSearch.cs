@@ -44,8 +44,8 @@ namespace AlgorithmForce.HeuristicSuite
         }
     }
 
-    public class BestFirstSearch<TStep> : BestFirstSearch<TStep, TStep>
-        where TStep : IStep<TStep>
+    public class BestFirstSearch<TKey> : BestFirstSearch<TKey, Step<TKey>>
     {
+        public BestFirstSearch() { }
     }
 }

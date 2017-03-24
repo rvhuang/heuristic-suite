@@ -63,8 +63,8 @@ namespace AlgorithmForce.HeuristicSuite
         }
     }
 
-    public class RecursiveBestFirstSearch<TStep> : RecursiveBestFirstSearch<TStep, TStep>
-        where TStep : IStep<TStep>
+    public class RecursiveBestFirstSearch<TKey> : RecursiveBestFirstSearch<TKey, Step<TKey>>
     {
+        public RecursiveBestFirstSearch() { }
     }
 }

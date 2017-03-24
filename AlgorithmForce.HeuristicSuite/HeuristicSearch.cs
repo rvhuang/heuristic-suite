@@ -77,7 +77,7 @@ namespace AlgorithmForce.HeuristicSuite
 #endif
             DefaultStepValidityChecker = step => step.IsValidStep;
         }
-
+        
         #endregion
 
         #region Methods

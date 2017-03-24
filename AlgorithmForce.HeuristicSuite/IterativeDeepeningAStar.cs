@@ -1,9 +1,5 @@
 ﻿using System.Collections.Generic;
 
-#if DEBUG
-using System.Diagnostics;
-#endif
-
 namespace AlgorithmForce.HeuristicSuite
 {
     public class IterativeDeepeningAStar<TKey, TStep> : HeuristicSearch<TKey, TStep>
@@ -92,8 +88,8 @@ namespace AlgorithmForce.HeuristicSuite
         #endregion 
     }
 
-    public class IterativeDeepeningAStar<TStep> : IterativeDeepeningAStar<TStep, TStep>
-        where TStep : IStep<TStep>
+    public class IterativeDeepeningAStar<TKey> : IterativeDeepeningAStar<TKey, Step<TKey>>
     {
+        public IterativeDeepeningAStar() { }
     }
 }

@@ -7,7 +7,7 @@ namespace AlgorithmForce.Example.EightPuzzle
 {
     using HeuristicSuite;
 
-    public class BoardState : IStep<BoardState>, INextStepFactory<BoardState, BoardState>, IEquatable<BoardState>
+    public class BoardState : IStep<Point2DInt32[]>, INextStepFactory<Point2DInt32[], BoardState>
     {
         #region Fields
 
@@ -29,24 +29,24 @@ namespace AlgorithmForce.Example.EightPuzzle
 
         #region IStep<BoardStatus> Properties
 
-        int IStep<BoardState>.Depth
+        int IStep<Point2DInt32[]>.Depth
         {
             get; set;
         }
 
-        IStep<BoardState> IStep<BoardState>.PreviousStep
+        IStep<Point2DInt32[]> IStep<Point2DInt32[]>.PreviousStep
         {
             get; set;
         }
 
-        bool IStep<BoardState>.IsValidStep
+        bool IStep<Point2DInt32[]>.IsValidStep
         {
             get { return true; }
         }
 
-        BoardState IStep<BoardState>.Key
+        Point2DInt32[] IStep<Point2DInt32[]>.Key
         {
-            get { return this; }
+            get { return this._positions.ToArray(); }
         }
 
         #endregion
@@ -135,8 +135,11 @@ namespace AlgorithmForce.Example.EightPuzzle
             return new BoardState(array);
         }
 
-        private static void Swap(Point2DInt32[] array, int indexA, int indexB)
+        public static void Swap(Point2DInt32[] array, int indexA, int indexB)
         {
+            if (array == null)
+                throw new ArgumentNullException("array");
+            
             var temp = array[indexA];
 
             array[indexA] = array[indexB];
@@ -164,7 +167,7 @@ namespace AlgorithmForce.Example.EightPuzzle
                 if (!set.Add(pos))
                     throw new ArgumentException("One or more elements are not unique.", "positions");
             }
-            return set.ToArray();
+            return positions.ToArray();
         }
 
         #endregion

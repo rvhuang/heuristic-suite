@@ -8,7 +8,7 @@ namespace AlgorithmForce.Example.EightPuzzle
     {
         public static void Main(string[] args)
         {
-            var engine = default(HeuristicSearch<BoardState, BoardState>);
+            var engine = default(HeuristicSearch<Point2DInt32[], BoardState>);
 
             while (true)
             {
@@ -50,25 +50,27 @@ namespace AlgorithmForce.Example.EightPuzzle
                 switch (Console.ReadKey().Key)
                 {
                     case ConsoleKey.A:
-                        engine = new AStar<BoardState>();
+                        engine = new AStar<Point2DInt32[], BoardState>();
                         break;
 
                     case ConsoleKey.B:
-                        engine = new BestFirstSearch<BoardState>();
+                        engine = new BestFirstSearch<Point2DInt32[], BoardState>();
                         break;
 
                     case ConsoleKey.I:
-                        engine = new IterativeDeepeningAStar<BoardState>();
+                        engine = new IterativeDeepeningAStar<Point2DInt32[], BoardState>();
                         break;
 
                     case ConsoleKey.R:
-                        engine = new RecursiveBestFirstSearch<BoardState>();
+                        engine = new RecursiveBestFirstSearch<Point2DInt32[], BoardState>();
                         break;
 
                     default: continue;
                 }
-                Console.WriteLine();
+                engine.EqualityComparer = new SequenceEqualityComparer<Point2DInt32>();
 
+                Console.WriteLine();
+                
                 foreach (var step in engine.Execute(initial, goal, new BoardStateComparer(goal.Positions)).Reverse().Enumerate())
                 {
                     Console.WriteLine("Step {0}:", step.Depth);
