@@ -17,26 +17,45 @@ namespace AlgorithmForce.Example.CoinsFlipping
             Console.WriteLine("The puzzle is inspired by brilliant.org:");
             Console.WriteLine("https://brilliant.org/practice/flipping-pairs/?chapter=introduction-to-joy");
             Console.WriteLine();
-
-            // true  -> head
+			Console.WriteLine("Please enter inital state: (H: Head, T: Tail)");
+			
+			// true  -> head
             // false -> tail
-            var goal = new bool[10] { true, true, true, true, true, true, true, true, true, true, };
-            var init = new bool[10] { false, true, true, false, false, true, true, false, false, false };
-
-            var engine = new AStar<bool[], Step<bool[]>>();
+            var init = new bool[10];
+            var goal = new bool[10] { true, true, true, true, true, true, true, true, true, true, };;
+			
+			for (var i = 0; i < 10; i++)
+				init[i] = Console.ReadKey().Key == ConsoleKey.H;
+			
+            Console.WriteLine();
+			
+			var engine = new AStar<bool[]>();
 
             engine.EqualityComparer = new SequenceEqualityComparer<bool>();
             engine.NextStepsFactory = GetNextSteps;
 
             var solution = engine.ExecuteWith(new Step<bool[]>(init), goal, new PuzzleStateComparer()).Reverse();
+			var prev = default(IStep<bool[]>);
 
             foreach (var step in solution.Enumerate())
             {
-                var coins = step.Key;
-
                 Console.Write("Step {0}: ", step.Depth);
-                Console.Write(string.Concat(coins.Select(coin => coin ? " H " : " T ")));
-                Console.WriteLine(" {0}", step.Depth == 0 ? "(Initial)" : string.Empty);
+				
+				if (prev == null)
+					Console.Write(string.Concat(step.Key.Select(coin => coin ? " H " : " T ")));
+                else
+				{
+					for (var i = 0; i < 10; i++)
+					{
+						// find the difference and give different color
+						Console.ForegroundColor = step.Key[i] == prev.Key[i] ? ConsoleColor.Gray : ConsoleColor.Green;
+						Console.Write(step.Key[i] ? " H " : " T ");
+						Console.ForegroundColor = ConsoleColor.Gray;
+					}
+				}
+				
+				prev = step;
+				Console.WriteLine(" {0}", step.Depth == 0 ? "(Initial)" : string.Empty);
             }
             Console.ReadKey(true);
         }
@@ -48,15 +67,10 @@ namespace AlgorithmForce.Example.CoinsFlipping
                 var copied = coins.Key.ToArray();
 
                 copied[i] = !copied[i];
-                copied[i+ 1] = !copied[i + 1];
+                copied[i + 1] = !copied[i + 1];
 
                 yield return new Step<bool[]>(copied);
             }
-        }
-
-        static void Print(bool[] array)
-        {
-            Console.WriteLine(string.Join(", ", array.Select(coin => coin ? "Head" : "Tail")));
         }
     }
 }
