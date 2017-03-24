@@ -39,6 +39,10 @@ The algorithm can now be run by invoking `Execute` method with `from` and `goal`
     ![From](http://www.8puzzle.com/images/8_puzzle_start_state_a.png)
     ![Goal](http://www.8puzzle.com/images/8_puzzle_goal_state_a.png)
 
+* Coins Flipping Puzzle ([AlgorithmForce.Example.CoinsFlipping](https://github.com/rvhuang/heuristic-suite/tree/master/AlgorithmForce.Example.CoinsFlipping))
+
+    This example demonstrates how the game AI solves the coins flipping puzzle. In the puzzle, only a pair of adjacent coins is allowed to be flipped over at same time. All ten coins that are head is the goal. The puzzle is inspired by [brilliant.org](https://brilliant.org/practice/flipping-pairs/?chapter=introduction-to-joy).
+
 More examples will be added in future.
 
 ### Platform
