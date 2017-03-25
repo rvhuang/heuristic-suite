@@ -17,9 +17,9 @@ namespace AlgorithmForce.Example.CoinsFlipping
             Console.WriteLine("The puzzle is inspired by brilliant.org:");
             Console.WriteLine("https://brilliant.org/practice/flipping-pairs/?chapter=introduction-to-joy");
             Console.WriteLine();
-			Console.WriteLine("Please enter inital state: (H: Head, T: Tail)");
-			
-			// true  -> head
+            Console.WriteLine("Please enter inital state: (H: Head, T: Tail)");
+
+            // true  -> head
             // false -> tail
             var init = new bool[10];
             var goal = new bool[10] { true, true, true, true, true, true, true, true, true, true, };
@@ -41,36 +41,36 @@ namespace AlgorithmForce.Example.CoinsFlipping
                     default: continue;
                 }
             }
-			
+
             Console.WriteLine();
-			
-			var engine = new AStar<bool[]>();
+
+            var engine = new AStar<bool[]>();
 
             engine.EqualityComparer = new SequenceEqualityComparer<bool>();
             engine.NextStepsFactory = GetNextSteps;
 
             var solution = engine.Execute(init, goal, new PuzzleStateComparer()).Reverse();
-			var prev = default(IStep<bool[]>);
+            var prev = default(IStep<bool[]>);
 
             foreach (var step in solution.Enumerate())
             {
                 Console.Write("Step {0}: ", step.Depth);
-				
-				if (prev == null)
-					Console.Write(string.Concat(step.Key.Select(coin => coin ? " H " : " T ")));
+
+                if (prev == null)
+                    Console.Write(string.Concat(step.Key.Select(coin => coin ? " H " : " T ")));
                 else
-				{
-					for (var i = 0; i < 10; i++)
-					{
-						// find the difference and give different color
-						Console.ForegroundColor = step.Key[i] == prev.Key[i] ? ConsoleColor.Gray : ConsoleColor.Green;
-						Console.Write(step.Key[i] ? " H " : " T ");
-						Console.ForegroundColor = ConsoleColor.Gray;
-					}
-				}
-				
-				prev = step;
-				Console.WriteLine(" {0}", step.Depth == 0 ? "(Initial)" : string.Empty);
+                {
+                    for (var i = 0; i < 10; i++)
+                    {
+                        // find the difference and give different color
+                        Console.ForegroundColor = step.Key[i] == prev.Key[i] ? ConsoleColor.Gray : ConsoleColor.Green;
+                        Console.Write(step.Key[i] ? " H " : " T ");
+                        Console.ForegroundColor = ConsoleColor.Gray;
+                    }
+                }
+
+                prev = step;
+                Console.WriteLine(" {0}", step.Depth == 0 ? "(Initial)" : string.Empty);
             }
             Console.ReadKey(true);
         }
