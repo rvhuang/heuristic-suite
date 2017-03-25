@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace AlgorithmForce.HeuristicSuite
 {
@@ -32,7 +33,7 @@ namespace AlgorithmForce.HeuristicSuite
 
         #region Override
 
-        protected override TStep ExecuteCore(TStep from, IStep<TKey> goal, IComparer<TKey> c)
+        protected override TStep ExecuteCore(TStep from, TStep goal, IComparer<TKey> c)
         {
             var counter = 0;
             var bound = from;
@@ -54,7 +55,7 @@ namespace AlgorithmForce.HeuristicSuite
         
         #region Core
 
-        private RecursionResult Search(TStep node, TStep bound, IStep<TKey> goal, RecursionState state)
+        private RecursionResult Search(TStep node, TStep bound, TStep goal, RecursionState state)
         {
             if (state.StepComparer.Compare(node, bound) > 0)
                 return RecursionResult.Create(RecursionFlag.InProgress, node);
@@ -91,5 +92,18 @@ namespace AlgorithmForce.HeuristicSuite
     public class IterativeDeepeningAStar<TKey> : IterativeDeepeningAStar<TKey, Step<TKey>>
     {
         public IterativeDeepeningAStar() { }
+
+        public Step<TKey> Execute(TKey initKey, TKey goalKey)
+        {
+            return this.Execute(initKey, goalKey, Comparer<TKey>.Default);
+        }
+
+        public Step<TKey> Execute(TKey initKey, TKey goalKey, IComparer<TKey> comparer)
+        {
+            if (initKey == null) throw new ArgumentNullException(nameof(initKey));
+            if (goalKey == null) throw new ArgumentNullException(nameof(goalKey));
+
+            return base.Execute(new Step<TKey>(initKey), new Step<TKey>(goalKey), comparer);
+        }
     }
 }

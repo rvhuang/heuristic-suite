@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+
 namespace AlgorithmForce.HeuristicSuite
 {
     public class RecursiveBestFirstSearch<TKey, TStep> : HeuristicSearch<TKey, TStep>
@@ -21,7 +23,7 @@ namespace AlgorithmForce.HeuristicSuite
 
         #endregion
 
-        protected override TStep ExecuteCore(TStep from, IStep<TKey> goal, IComparer<TKey> c)
+        protected override TStep ExecuteCore(TStep from, TStep goal, IComparer<TKey> c)
         {
             return Search(from, from, goal, new RecursionState(this, c)).Step;
         }
@@ -66,5 +68,18 @@ namespace AlgorithmForce.HeuristicSuite
     public class RecursiveBestFirstSearch<TKey> : RecursiveBestFirstSearch<TKey, Step<TKey>>
     {
         public RecursiveBestFirstSearch() { }
+
+        public Step<TKey> Execute(TKey initKey, TKey goalKey)
+        {
+            return this.Execute(initKey, goalKey, Comparer<TKey>.Default);
+        }
+
+        public Step<TKey> Execute(TKey initKey, TKey goalKey, IComparer<TKey> comparer)
+        {
+            if (initKey == null) throw new ArgumentNullException(nameof(initKey));
+            if (goalKey == null) throw new ArgumentNullException(nameof(goalKey));
+
+            return base.Execute(new Step<TKey>(initKey), new Step<TKey>(goalKey), comparer);
+        }
     }
 }

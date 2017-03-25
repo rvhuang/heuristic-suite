@@ -7,8 +7,8 @@ using System.Diagnostics;
 
 namespace AlgorithmForce.HeuristicSuite
 {
-    class StepComparer<TKey, TStep> : Comparer<TStep>, IComparer<IStep<TKey>>
-         where TStep : IStep<TKey>
+    class StepComparer<TKey, TStep> : Comparer<TStep>
+        where TStep : IStep<TKey>
     {
         private readonly IComparer<TKey> _keyComparer;
         private readonly Comparison<IStep<TKey>> _comparison;
@@ -18,7 +18,7 @@ namespace AlgorithmForce.HeuristicSuite
             get { return this._keyComparer; }
         }
 
-        internal StepComparer(IComparer<TKey> keyComparer, HeuristicFunctionPreference preference)
+        public StepComparer(IComparer<TKey> keyComparer, HeuristicFunctionPreference preference)
         {
             this._keyComparer = keyComparer == null ? Comparer<TKey>.Default : keyComparer;
 
@@ -45,15 +45,7 @@ namespace AlgorithmForce.HeuristicSuite
 
             return 0; // actually we won't reach here.
         }
-
-        int IComparer<IStep<TKey>>.Compare(IStep<TKey> a, IStep<TKey> b)
-        {
-            if (a == null) return b == null ? 0 : 1;
-            if (a != null) return b != null ? this._comparison(a, b) : -1;
-
-            return 0; // actually we won't reach here.
-        }
-
+        
         private int AverageComparison(IStep<TKey> a, IStep<TKey> b)
         {
             var keyComparing = _keyComparer.Compare(a.Key, b.Key); // H(x)

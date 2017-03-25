@@ -49,20 +49,23 @@
     <Compile Include="..\AlgorithmForce.HeuristicSuite\ComparerHelper.cs">
       <Link>ComparerHelper.cs</Link>
     </Compile>
+    <Compile Include="..\AlgorithmForce.HeuristicSuite\DistanceComparer.cs">
+      <Link>DistanceComparer.cs</Link>
+    </Compile>
     <Compile Include="..\AlgorithmForce.HeuristicSuite\DistanceHelper.cs">
       <Link>DistanceHelper.cs</Link>
     </Compile>
     <Compile Include="..\AlgorithmForce.HeuristicSuite\EuclideanDistanceComparer.cs">
       <Link>EuclideanDistanceComparer.cs</Link>
     </Compile>
-    <Compile Include="..\AlgorithmForce.HeuristicSuite\GoalOrientedStepComparer.cs">
-      <Link>GoalOrientedStepComparer.cs</Link>
+    <Compile Include="..\AlgorithmForce.HeuristicSuite\HeuristicComparer.cs">
+      <Link>HeuristicComparer.cs</Link>
     </Compile>
     <Compile Include="..\AlgorithmForce.HeuristicSuite\HeuristicSearch.cs">
       <Link>HeuristicSearch.cs</Link>
     </Compile>
-    <Compile Include="..\AlgorithmForce.HeuristicSuite\IGoalOrientedComparer.cs">
-      <Link>IGoalOrientedComparer.cs</Link>
+    <Compile Include="..\AlgorithmForce.HeuristicSuite\IHeuristicComparer.cs">
+      <Link>IHeuristicComparer.cs</Link>
     </Compile>
     <Compile Include="..\AlgorithmForce.HeuristicSuite\IStep.cs">
       <Link>IStep.cs</Link>

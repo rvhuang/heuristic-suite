@@ -21,7 +21,6 @@ namespace AlgorithmForce.HeuristicSuite
         private Func<TStep, bool> _stepValidityChecker = DefaultStepValidityChecker;
 
         private IEqualityComparer<TKey> _equalityComparer = EqualityComparer<TKey>.Default;
-
         private HeuristicFunctionPreference preference = HeuristicFunctionPreference.Average;
 
         #endregion
@@ -77,6 +76,8 @@ namespace AlgorithmForce.HeuristicSuite
 #endif
             DefaultStepValidityChecker = step => step.IsValidStep;
         }
+
+        protected HeuristicSearch() { }
         
         #endregion
 
@@ -86,31 +87,17 @@ namespace AlgorithmForce.HeuristicSuite
         {
             return this.ExecuteCore(from, goal, Comparer<TKey>.Default);
         }
-
-        public TStep ExecuteWith(TStep from, TKey goalState)
-        {
-            if (goalState == null) throw new ArgumentNullException("goalState");
-
-            return this.ExecuteCore(from, new Step<TKey>(goalState), Comparer<TKey>.Default);
-        }
-
+        
         public TStep Execute(TStep from, TStep goal, IComparer<TKey> comparer)
         {
             return this.ExecuteCore(from, goal, comparer);
         }
-
-        public TStep ExecuteWith(TStep from, TKey goalState, IComparer<TKey> comparer)
-        {
-            if (goalState == null) throw new ArgumentNullException("goalState");
-
-            return this.ExecuteCore(from, new Step<TKey>(goalState), comparer);
-        }
-
+        
         #endregion
 
         #region To Be Implemented
 
-        protected abstract TStep ExecuteCore(TStep from, IStep<TKey> goal, IComparer<TKey> c);
+        protected abstract TStep ExecuteCore(TStep from, TStep goal, IComparer<TKey> c);
 
         #endregion
 
@@ -135,8 +122,8 @@ namespace AlgorithmForce.HeuristicSuite
 
         public virtual IComparer<TStep> GetStepComparer(IComparer<TKey> c)
         {
-            if (c is IGoalOrientedComparer<TKey>)
-                return new GoalOrientedStepComparer<TKey, TStep>(c as IGoalOrientedComparer<TKey>, this.preference);
+            if (c is IComparer<TStep>)
+                return c as IComparer<TStep>;
             else
                 return new StepComparer<TKey, TStep>(c, this.preference);
         }

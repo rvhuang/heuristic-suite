@@ -22,10 +22,25 @@ namespace AlgorithmForce.Example.CoinsFlipping
 			// true  -> head
             // false -> tail
             var init = new bool[10];
-            var goal = new bool[10] { true, true, true, true, true, true, true, true, true, true, };;
-			
-			for (var i = 0; i < 10; i++)
-				init[i] = Console.ReadKey().Key == ConsoleKey.H;
+            var goal = new bool[10] { true, true, true, true, true, true, true, true, true, true, };
+
+            for (var i = 0; i < 10; i++)
+            {
+                switch (Console.ReadKey(true).Key)
+                {
+                    case ConsoleKey.H:
+                        init[i] = true;
+                        Console.Write(ConsoleKey.H);
+                        break;
+
+                    case ConsoleKey.T:
+                        init[i] = false;
+                        Console.Write(ConsoleKey.T);
+                        break;
+
+                    default: continue;
+                }
+            }
 			
             Console.WriteLine();
 			
@@ -34,7 +49,7 @@ namespace AlgorithmForce.Example.CoinsFlipping
             engine.EqualityComparer = new SequenceEqualityComparer<bool>();
             engine.NextStepsFactory = GetNextSteps;
 
-            var solution = engine.ExecuteWith(new Step<bool[]>(init), goal, new PuzzleStateComparer()).Reverse();
+            var solution = engine.Execute(init, goal, new PuzzleStateComparer()).Reverse();
 			var prev = default(IStep<bool[]>);
 
             foreach (var step in solution.Enumerate())

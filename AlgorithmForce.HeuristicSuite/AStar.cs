@@ -27,7 +27,7 @@ namespace AlgorithmForce.HeuristicSuite
                 if (Enum.IsDefined(typeof(SolutionFindingMode), value))
                     this.mode = value;
                 else
-                    throw new ArgumentException("Not a defined value.", "SolutionFindingMode");
+                    throw new ArgumentException("Not a defined value.", nameof(this.FindingMode));
             }
         }
 
@@ -41,7 +41,7 @@ namespace AlgorithmForce.HeuristicSuite
 
         #region Core
 
-        protected override TStep ExecuteCore(TStep from, IStep<TKey> goal, IComparer<TKey> c)
+        protected override TStep ExecuteCore(TStep from, TStep goal, IComparer<TKey> c)
         {
             var sc = base.GetStepComparer(c);
             var open = new List<TStep>();
@@ -117,6 +117,19 @@ namespace AlgorithmForce.HeuristicSuite
     public class AStar<TKey> : AStar<TKey, Step<TKey>>
     {
         public AStar() { }
+
+        public Step<TKey> Execute(TKey initKey, TKey goalKey)
+        {
+            return this.Execute(initKey, goalKey, Comparer<TKey>.Default);
+        }
+
+        public Step<TKey> Execute(TKey initKey, TKey goalKey, IComparer<TKey> comparer)
+        {
+            if (initKey == null) throw new ArgumentNullException(nameof(initKey));
+            if (goalKey == null) throw new ArgumentNullException(nameof(goalKey));
+
+            return base.Execute(new Step<TKey>(initKey), new Step<TKey>(goalKey), comparer);
+        }
     }
 
     public enum SolutionFindingMode
