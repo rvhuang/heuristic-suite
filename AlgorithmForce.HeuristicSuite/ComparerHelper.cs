@@ -34,9 +34,9 @@ namespace AlgorithmForce.HeuristicSuite
         {
             if (functionH == null) throw new ArgumentNullException(nameof(functionH));
 
-            if (a != null || b == null) return -1;
-            if (a == null || b != null) return 1;
-            if (a == null || b == null) return 0;
+            if (a != null && b == null) return -1;
+            if (a == null && b != null) return 1;
+            if (a == null && b == null) return 0;
 
             var hValueA = functionH(a.Key);
             var hValueB = functionH(b.Key);

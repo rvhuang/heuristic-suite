@@ -11,9 +11,9 @@ namespace AlgorithmForce.Example.CoinsFlipping
         static void Main(string[] args)
         {
             Console.WriteLine("This example demonstrates how the game AI solves the coins flipping puzzle.");
+            Console.WriteLine("Puzzle Rule:");
             Console.WriteLine("Only a pair of adjacent coins is allowed to be flipped over at same time.");
             Console.WriteLine("All ten coins that are head is the goal.");
-            Console.WriteLine();
             Console.WriteLine("The puzzle is inspired by brilliant.org:");
             Console.WriteLine("https://brilliant.org/practice/flipping-pairs/?chapter=introduction-to-joy");
             Console.WriteLine();
@@ -23,18 +23,21 @@ namespace AlgorithmForce.Example.CoinsFlipping
             // false -> tail
             var init = new bool[10];
             var goal = new bool[10] { true, true, true, true, true, true, true, true, true, true, };
+            var index = 0;
 
-            for (var i = 0; i < 10; i++)
+            while(index < 10)
             {
                 switch (Console.ReadKey(true).Key)
                 {
                     case ConsoleKey.H:
-                        init[i] = true;
+                        init[index] = true;
+                        index++;
                         Console.Write(ConsoleKey.H);
                         break;
 
                     case ConsoleKey.T:
-                        init[i] = false;
+                        init[index] = false;
+                        index++;
                         Console.Write(ConsoleKey.T);
                         break;
 

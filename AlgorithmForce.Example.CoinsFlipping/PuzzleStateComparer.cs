@@ -6,14 +6,12 @@ namespace AlgorithmForce.Example.CoinsFlipping
 
     class PuzzleStateComparer : HeuristicComparer<bool[]>
     {
-        public static bool[] DefaulGoal = new bool[10] { true, true, true, true, true, true, true, true, true, true, };
-
         public PuzzleStateComparer()
-            : base(DefaulGoal, EstimateH)
+            : base(Estimation)
         {
         }
 
-        private static double EstimateH(bool[] coins)
+        private static double Estimation(bool[] coins)
         {
             return coins.Count(coin => coin) + GetContinuity(coins);
         }
