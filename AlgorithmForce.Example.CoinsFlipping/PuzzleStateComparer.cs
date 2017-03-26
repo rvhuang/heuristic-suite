@@ -9,11 +9,11 @@ namespace AlgorithmForce.Example.CoinsFlipping
         public static bool[] DefaulGoal = new bool[10] { true, true, true, true, true, true, true, true, true, true, };
 
         public PuzzleStateComparer()
-            : base(DefaulGoal)
+            : base(DefaulGoal, EstimateH)
         {
         }
 
-        public override double EstimateH(bool[] coins)
+        private static double EstimateH(bool[] coins)
         {
             return coins.Count(coin => coin) + GetContinuity(coins);
         }

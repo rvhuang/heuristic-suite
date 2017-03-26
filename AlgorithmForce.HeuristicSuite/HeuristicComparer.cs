@@ -3,19 +3,38 @@ using System.Collections.Generic;
 
 namespace AlgorithmForce.HeuristicSuite
 {
-    public abstract class HeuristicComparer<TKey> : IHeuristicComparer<TKey>
+    public class HeuristicComparer<TKey> : IHeuristicComparer<TKey>
     {
-        public HeuristicFunctionPreference Preference { get; set; }
+        #region Fields
 
-        public TKey Goal { get; private set; }
+        private readonly TKey goal;
+        private readonly Func<TKey, double> estimationH;
 
-        protected HeuristicComparer(TKey goal)
+        #endregion
+
+        #region Properties
+
+        public HeuristicFunctionPreference Preference
         {
-            if (goal == null) throw new ArgumentNullException(nameof(goal));
-
-            this.Goal = goal;
+            get; set;
         }
 
+        public TKey Goal
+        {
+            get { return this.goal; }
+        }
+
+        #endregion
+
+        public HeuristicComparer(TKey goal, Func<TKey, double> estimationH)
+        {
+            if (goal == null) throw new ArgumentNullException(nameof(goal));
+            if (estimationH == null) throw new ArgumentNullException(nameof(estimationH));
+
+            this.goal = goal;
+            this.estimationH = estimationH;
+        }
+        
         public int Compare(TKey x, TKey y)
         {
             return Comparer<double>.Default.Compare(this.EstimateH(x), this.EstimateH(y));
@@ -26,6 +45,11 @@ namespace AlgorithmForce.HeuristicSuite
             return this.Compare(x, y, this.Preference);
         }
 
-        public abstract double EstimateH(TKey key);
+        public double EstimateH(TKey key)
+        {
+            if (key == null) throw new ArgumentNullException(nameof(key));
+
+            return this.estimationH(key);
+        }
     }
 }
