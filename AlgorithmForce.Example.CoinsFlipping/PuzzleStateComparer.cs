@@ -13,7 +13,7 @@ namespace AlgorithmForce.Example.CoinsFlipping
 
         private static double Estimation(bool[] coins)
         {
-            return coins.Count(coin => coin) + GetContinuity(coins);
+            return 0 - coins.Count(coin => coin) + GetContinuity(coins);
         }
 
         private static int GetContinuity(bool[] coins)
