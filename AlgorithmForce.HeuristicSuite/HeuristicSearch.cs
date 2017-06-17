@@ -78,26 +78,48 @@ namespace AlgorithmForce.HeuristicSuite
         }
 
         protected HeuristicSearch() { }
-        
+
         #endregion
 
         #region Methods
 
         public TStep Execute(TStep from, TStep goal)
         {
-            return this.ExecuteCore(from, goal, Comparer<TKey>.Default);
+            if (from == null) throw new ArgumentNullException(nameof(from));
+            if (goal == null) throw new ArgumentNullException(nameof(goal));
+
+            return this.ExecuteCore(from, goal, new StepComparer<TKey, TStep>(Comparer<TKey>.Default, this.preference));
         }
         
         public TStep Execute(TStep from, TStep goal, IComparer<TKey> comparer)
         {
-            return this.ExecuteCore(from, goal, comparer);
+            if (from == null) throw new ArgumentNullException(nameof(from));
+            if (goal == null) throw new ArgumentNullException(nameof(goal));
+
+            return this.ExecuteCore(from, goal, new StepComparer<TKey, TStep>(comparer, this.preference));
         }
-        
+
+        public TStep Execute(TStep from, TStep goal, Func<TKey, double> estimation)
+        {
+            if (from == null) throw new ArgumentNullException(nameof(from));
+            if (goal == null) throw new ArgumentNullException(nameof(goal));
+
+            return this.ExecuteCore(from, goal, new HeuristicComparer<TKey, TStep>(estimation, this.preference));
+        }
+
+        public TStep Execute(TStep from, TStep goal, Func<TKey, TKey, double> estimationFromGoal)
+        {
+            if (from == null) throw new ArgumentNullException(nameof(from));
+            if (goal == null) throw new ArgumentNullException(nameof(goal));
+
+            return this.ExecuteCore(from, goal, new HeuristicComparer<TKey, TStep>((key) => estimationFromGoal(key, goal.Key), this.preference));
+        }
+
         #endregion
 
         #region To Be Implemented
 
-        protected abstract TStep ExecuteCore(TStep from, TStep goal, IComparer<TKey> c);
+        protected abstract TStep ExecuteCore(TStep from, TStep goal, IHeuristicComparer<TKey, TStep> c);
 
         #endregion
 
@@ -119,15 +141,7 @@ namespace AlgorithmForce.HeuristicSuite
 
             return true;
         }
-
-        public virtual IComparer<TStep> GetStepComparer(IComparer<TKey> c)
-        {
-            if (c is IComparer<TStep>)
-                return c as IComparer<TStep>;
-            else
-                return new StepComparer<TKey, TStep>(c, this.preference);
-        }
-
+        
         #endregion
 
         #region Recursion State
@@ -143,10 +157,10 @@ namespace AlgorithmForce.HeuristicSuite
                 get { return this.sc; }
             }
 
-            public RecursionState(HeuristicSearch<TKey, TStep> owner, IComparer<TKey> c)
+            public RecursionState(HeuristicSearch<TKey, TStep> owner, IComparer<TStep> sc)
             {
-                this.owner = owner;
-                this.sc = owner.GetStepComparer(c);
+                this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
+                this.sc = sc ?? Comparer<TStep>.Default;
                 this.visited = new HashSet<TKey>(owner.EqualityComparer);
             }
 

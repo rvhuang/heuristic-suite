@@ -1,14 +1,19 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace AlgorithmForce.Example.CoinsFlipping
 {
     using HeuristicSuite;
 
-    class PuzzleStateComparer : HeuristicComparer<bool[]>
+    class PuzzleStateComparer : Comparer<bool[]>
     {
         public PuzzleStateComparer()
-            : base(Estimation)
         {
+        }
+
+        public override int Compare(bool[] x, bool[] y)
+        {
+            return DistanceHelper.DoubleComparer.Compare(Estimation(x), Estimation(y));
         }
 
         private static double Estimation(bool[] coins)

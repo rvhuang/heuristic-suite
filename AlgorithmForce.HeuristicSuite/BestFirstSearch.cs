@@ -7,7 +7,7 @@ namespace AlgorithmForce.HeuristicSuite
     public class BestFirstSearch<TKey, TStep> : HeuristicSearch<TKey, TStep>
         where TStep : IStep<TKey>
     {
-        protected override TStep ExecuteCore(TStep from, TStep goal, IComparer<TKey> c)
+        protected override TStep ExecuteCore(TStep from, TStep goal, IHeuristicComparer<TKey, TStep> sc)
         {
             var visited = new HashSet<TKey>(base.EqualityComparer);
             var nextSteps = new List<TStep>();
@@ -39,7 +39,7 @@ namespace AlgorithmForce.HeuristicSuite
                     nextSteps.Add(next);
                     hasNext = true;
                 }
-                if (hasNext) nextSteps.Sort((a, b) => c.Compare(a.Key, b.Key));
+                if (hasNext) nextSteps.Sort((a, b) => sc.KeyComparer.Compare(a.Key, b.Key));
             }
             return default(TStep);
         }

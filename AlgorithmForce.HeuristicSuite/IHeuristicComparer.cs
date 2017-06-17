@@ -2,12 +2,11 @@
 
 namespace AlgorithmForce.HeuristicSuite
 {
-    public interface IHeuristicComparer<TKey> : IComparer<TKey>, IComparer<IStep<TKey>>
+    public interface IHeuristicComparer<TKey, TStep> : IComparer<TStep>
+        where TStep : IStep<TKey>
     {
-        HeuristicFunctionPreference Preference { get; set; }
+        HeuristicFunctionPreference Preference { get; }
 
-        TKey Goal { get; }
-
-        double EstimateH(TKey key);
+        IComparer<TKey> KeyComparer { get; }
     }
 }

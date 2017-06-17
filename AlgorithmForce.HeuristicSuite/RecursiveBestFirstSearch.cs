@@ -23,9 +23,9 @@ namespace AlgorithmForce.HeuristicSuite
 
         #endregion
 
-        protected override TStep ExecuteCore(TStep from, TStep goal, IComparer<TKey> c)
+        protected override TStep ExecuteCore(TStep from, TStep goal, IHeuristicComparer<TKey, TStep> sc)
         {
-            return Search(from, from, goal, new RecursionState(this, c)).Step;
+            return Search(from, from, goal, new RecursionState(this, sc)).Step;
         }
 
         private RecursionResult Search(TStep node, TStep bound, IStep<TKey> goal, RecursionState state)

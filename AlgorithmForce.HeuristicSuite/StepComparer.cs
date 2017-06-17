@@ -7,20 +7,27 @@ using System.Diagnostics;
 
 namespace AlgorithmForce.HeuristicSuite
 {
-    class StepComparer<TKey, TStep> : Comparer<TStep>
+    public class StepComparer<TKey, TStep> : IHeuristicComparer<TKey, TStep>
         where TStep : IStep<TKey>
     {
         private readonly IComparer<TKey> _keyComparer;
         private readonly Comparison<IStep<TKey>> _comparison;
+        private readonly HeuristicFunctionPreference _preference;
 
         public IComparer<TKey> KeyComparer
         {
             get { return this._keyComparer; }
         }
 
+        public HeuristicFunctionPreference Preference
+        {
+            get { return this._preference; }
+        }
+
         public StepComparer(IComparer<TKey> keyComparer, HeuristicFunctionPreference preference)
         {
             this._keyComparer = keyComparer == null ? Comparer<TKey>.Default : keyComparer;
+            this._preference = preference;
 
             switch (preference)
             {
@@ -38,7 +45,7 @@ namespace AlgorithmForce.HeuristicSuite
             }
         }
 
-        public override int Compare(TStep a, TStep b)
+        public int Compare(TStep a, TStep b)
         {
             if (a == null) return b == null ? 0 : 1;
             if (a != null) return b != null ? this._comparison(a, b) : -1;

@@ -10,10 +10,5 @@
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="GoalOrientedStepComparer.cs" />
-    <Compile Remove="IGoalOrientedComparer.cs" />
-  </ItemGroup>
-
+  
 </Project>

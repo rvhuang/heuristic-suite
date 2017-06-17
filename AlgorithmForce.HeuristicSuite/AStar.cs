@@ -41,9 +41,8 @@ namespace AlgorithmForce.HeuristicSuite
 
         #region Core
 
-        protected override TStep ExecuteCore(TStep from, TStep goal, IComparer<TKey> c)
+        protected override TStep ExecuteCore(TStep from, TStep goal, IHeuristicComparer<TKey, TStep> sc)
         {
-            var sc = base.GetStepComparer(c);
             var open = new List<TStep>();
             var closed = new Dictionary<TKey, TStep>(base.EqualityComparer);
 
@@ -87,14 +86,14 @@ namespace AlgorithmForce.HeuristicSuite
                 }
                 if (hasNext) open.Sort(sc);
             }
-            return HandleSolutionNotFound(closed, c, sc);
+            return HandleSolutionNotFound(closed, sc);
         }
 
         #endregion
 
         #region Others
 
-        protected virtual TStep HandleSolutionNotFound(IDictionary<TKey, TStep> closed, IComparer<TKey> c, IComparer<TStep> sc)
+        protected virtual TStep HandleSolutionNotFound(IDictionary<TKey, TStep> closed, IHeuristicComparer<TKey, TStep> sc)
         {
             switch (this.mode)
             {
@@ -102,7 +101,7 @@ namespace AlgorithmForce.HeuristicSuite
                     return default(TStep);
 
                 case SolutionFindingMode.ClosestIfNotFound:
-                    return closed.OrderBy(kvp => kvp.Key, c).FirstOrDefault().Value;
+                    return closed.OrderByDescending(kvp => kvp.Key, sc.KeyComparer).FirstOrDefault().Value;
 
                 case SolutionFindingMode.LatestIfNotFound:
                     return closed.OrderBy(kvp => kvp.Value, sc).FirstOrDefault().Value;

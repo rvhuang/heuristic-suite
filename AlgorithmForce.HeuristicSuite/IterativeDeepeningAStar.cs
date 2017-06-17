@@ -33,14 +33,14 @@ namespace AlgorithmForce.HeuristicSuite
 
         #region Override
 
-        protected override TStep ExecuteCore(TStep from, TStep goal, IComparer<TKey> c)
+        protected override TStep ExecuteCore(TStep from, TStep goal, IHeuristicComparer<TKey, TStep> sc)
         {
             var counter = 0;
             var bound = from;
             
             while (counter <= max)
             {
-                var t = Search(from, bound, goal, new RecursionState(this, c));
+                var t = Search(from, bound, goal, new RecursionState(this, sc));
 
                 if (t.Flag == RecursionFlag.Found) return t.Step;
                 if (t.Flag == RecursionFlag.NotFound) return default(TStep);
