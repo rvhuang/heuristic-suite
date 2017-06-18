@@ -24,7 +24,11 @@ In order to apply the algorithm to puzzle, following implementations are needed:
 
 3. **The method to get next steps from current step.** Next step information can be given by implementing `INextStepFactory(TKey, TStep)` interface, or providing `NextStepFactory` delegate.
 
-The algorithm can now be run by invoking `Execute` method with `from` and `goal` steps as parameters. If the solution exists, each of steps can be obtained by calling `Enumerate` method. Steps can be `Reverse`d before the enumeration starts.
+After which, the algorithm can be run by invoking `Execute` method with `from` and `goal` steps as parameters. If the solution exists, each of steps can be obtained by calling `Enumerate` method. Steps can be `Reverse`d before the enumeration starts.
+
+### Heuristic Function Preference
+
+The `HeuristicFunctionPreference` enumeration enable users to change the balance of function _f(n) = g(n) + h(n)_. When two steps are evaluated same score, the enumeration decides which function, _g(n)_ or _h(n)_, has higher priority. The changed balance can affect the behavior of entire algorithm.
 
 ### Examples
 
