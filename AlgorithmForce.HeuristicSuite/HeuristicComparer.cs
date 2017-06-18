@@ -32,7 +32,14 @@ namespace AlgorithmForce.HeuristicSuite
 
         public HeuristicComparer(Func<TKey, double> estimation, HeuristicFunctionPreference preference)
         {
+#if PORTABLE
+            if (estimation == null)
+                throw new ArgumentNullException(nameof(estimation));
+
+            this.estimation = estimation;
+#else
             this.estimation = estimation ?? throw new ArgumentNullException(nameof(estimation));
+#endif
             this.preference = preference;
             this.keyComparer = Comparer<TKey>.Create(this.KeyComparison);
         }

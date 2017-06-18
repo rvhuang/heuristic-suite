@@ -43,20 +43,11 @@
     <Compile Include="..\AlgorithmForce.HeuristicSuite\BestFirstSearch.cs">
       <Link>BestFirstSearch.cs</Link>
     </Compile>
-    <Compile Include="..\AlgorithmForce.HeuristicSuite\ChebyshevDistanceComparer.cs">
-      <Link>ChebyshevDistanceComparer.cs</Link>
-    </Compile>
     <Compile Include="..\AlgorithmForce.HeuristicSuite\ComparerHelper.cs">
       <Link>ComparerHelper.cs</Link>
     </Compile>
-    <Compile Include="..\AlgorithmForce.HeuristicSuite\DistanceComparer.cs">
-      <Link>DistanceComparer.cs</Link>
-    </Compile>
     <Compile Include="..\AlgorithmForce.HeuristicSuite\DistanceHelper.cs">
       <Link>DistanceHelper.cs</Link>
-    </Compile>
-    <Compile Include="..\AlgorithmForce.HeuristicSuite\EuclideanDistanceComparer.cs">
-      <Link>EuclideanDistanceComparer.cs</Link>
     </Compile>
     <Compile Include="..\AlgorithmForce.HeuristicSuite\HeuristicComparer.cs">
       <Link>HeuristicComparer.cs</Link>
@@ -72,9 +63,6 @@
     </Compile>
     <Compile Include="..\AlgorithmForce.HeuristicSuite\IterativeDeepeningAStar.cs">
       <Link>IterativeDeepeningAStar.cs</Link>
-    </Compile>
-    <Compile Include="..\AlgorithmForce.HeuristicSuite\ManhattanDistanceComparer.cs">
-      <Link>ManhattanDistanceComparer.cs</Link>
     </Compile>
     <Compile Include="..\AlgorithmForce.HeuristicSuite\Point2DInt32.cs">
       <Link>Point2DInt32.cs</Link>

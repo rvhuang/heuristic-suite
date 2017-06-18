@@ -159,7 +159,14 @@ namespace AlgorithmForce.HeuristicSuite
 
             public RecursionState(HeuristicSearch<TKey, TStep> owner, IComparer<TStep> sc)
             {
+#if PORTABLE
+                if (owner == null)
+                    throw new ArgumentNullException(nameof(owner));
+
+                this.owner = owner;
+#else
                 this.owner = owner ?? throw new ArgumentNullException(nameof(owner));
+#endif
                 this.sc = sc ?? Comparer<TStep>.Default;
                 this.visited = new HashSet<TKey>(owner.EqualityComparer);
             }
@@ -217,6 +224,6 @@ namespace AlgorithmForce.HeuristicSuite
             }
         }
 
-        #endregion
+#endregion
     }
 }
