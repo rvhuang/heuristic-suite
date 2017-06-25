@@ -7,12 +7,18 @@ using System.Diagnostics;
 
 namespace AlgorithmForce.HeuristicSuite
 {
-    public class StepComparer<TKey, TStep> : IHeuristicComparer<TKey, TStep>
+    public class DiscreteHeuristicComparer<TKey, TStep> : IHeuristicComparer<TKey, TStep>
         where TStep : IStep<TKey>
     {
+        #region Fields
+
         private readonly IComparer<TKey> _keyComparer;
-        private readonly Comparison<IStep<TKey>> _comparison;
+        private readonly Comparison<TStep> _comparison;
         private readonly HeuristicFunctionPreference _preference;
+
+        #endregion
+
+        #region Properties
 
         public IComparer<TKey> KeyComparer
         {
@@ -24,7 +30,11 @@ namespace AlgorithmForce.HeuristicSuite
             get { return this._preference; }
         }
 
-        public StepComparer(IComparer<TKey> keyComparer, HeuristicFunctionPreference preference)
+        #endregion
+
+        #region Constructor
+
+        public DiscreteHeuristicComparer(IComparer<TKey> keyComparer, HeuristicFunctionPreference preference)
         {
             this._keyComparer = keyComparer == null ? Comparer<TKey>.Default : keyComparer;
             this._preference = preference;
@@ -45,20 +55,25 @@ namespace AlgorithmForce.HeuristicSuite
             }
         }
 
+        #endregion
+
+        #region Methods
+
         public int Compare(TStep a, TStep b)
         {
-            if (a == null) return b == null ? 0 : 1;
-            if (a != null) return b != null ? this._comparison(a, b) : -1;
+            if (a != null && b == null) return -1;
+            if (a == null && b != null) return 1;
+            if (a == null && b == null) return 0;
 
-            return 0; // actually we won't reach here.
+            return this._comparison(a, b);
         }
         
-        private int AverageComparison(IStep<TKey> a, IStep<TKey> b)
+        private int AverageComparison(TStep a, TStep b)
         {
             var keyComparing = _keyComparer.Compare(a.Key, b.Key); // H(x)
             var depthComparing = DistanceHelper.Int32Comparer.Compare(a.Depth, b.Depth); // G(x)
 #if DEBUG
-            Debug.WriteLine("({0}) A: {1}\t B: {2} K: {3} D: {4}", nameof(StepComparer<TKey, TStep>), a, b, keyComparing, depthComparing);
+            Debug.WriteLine("({0}) A: {1}\t B: {2} K: {3} D: {4}", nameof(DiscreteHeuristicComparer<TKey, TStep>), a, b, keyComparing, depthComparing);
 #endif
             if (keyComparing < 0 && depthComparing < 0)
                 return -1;
@@ -75,7 +90,7 @@ namespace AlgorithmForce.HeuristicSuite
             return 0;
         }
 
-        private int KeyFirstComparison(IStep<TKey> a, IStep<TKey> b)
+        private int KeyFirstComparison(TStep a, TStep b)
         {
             var keyComparing = _keyComparer.Compare(a.Key, b.Key); // H(x)
             var depthComparing = DistanceHelper.Int32Comparer.Compare(a.Depth, b.Depth); // G(x)
@@ -95,7 +110,7 @@ namespace AlgorithmForce.HeuristicSuite
                 return depthComparing;
         }
 
-        private int DepthFirstComparison(IStep<TKey> a, IStep<TKey> b)
+        private int DepthFirstComparison(TStep a, TStep b)
         {
             var keyComparing = _keyComparer.Compare(a.Key, b.Key); // H(x)
             var depthComparing = DistanceHelper.Int32Comparer.Compare(a.Depth, b.Depth); // G(x)
@@ -114,6 +129,8 @@ namespace AlgorithmForce.HeuristicSuite
             else
                 return keyComparing;
         }
+
+        #endregion
     }
 
     public enum HeuristicFunctionPreference

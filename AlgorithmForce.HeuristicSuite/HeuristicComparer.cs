@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace AlgorithmForce.HeuristicSuite
 {
@@ -11,7 +12,7 @@ namespace AlgorithmForce.HeuristicSuite
         private readonly Func<TKey, double> estimation;
         private readonly HeuristicFunctionPreference preference;
         private readonly IComparer<TKey> keyComparer;
-
+        
         #endregion
 
         #region Properties
@@ -29,7 +30,7 @@ namespace AlgorithmForce.HeuristicSuite
         #endregion
 
         #region Constructor
-
+        
         public HeuristicComparer(Func<TKey, double> estimation, HeuristicFunctionPreference preference)
         {
 #if PORTABLE

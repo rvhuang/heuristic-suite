@@ -79,8 +79,8 @@
     <Compile Include="..\AlgorithmForce.HeuristicSuite\Step.cs">
       <Link>Step.cs</Link>
     </Compile>
-    <Compile Include="..\AlgorithmForce.HeuristicSuite\StepComparer.cs">
-      <Link>StepComparer.cs</Link>
+    <Compile Include="..\AlgorithmForce.HeuristicSuite\DiscreteHeuristicComparer.cs">
+      <Link>DiscreteHeuristicComparer.cs</Link>
     </Compile>
     <Compile Include="..\AlgorithmForce.HeuristicSuite\StepExtensions.cs">
       <Link>StepExtensions.cs</Link>

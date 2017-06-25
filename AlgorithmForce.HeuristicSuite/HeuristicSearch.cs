@@ -88,7 +88,7 @@ namespace AlgorithmForce.HeuristicSuite
             if (from == null) throw new ArgumentNullException(nameof(from));
             if (goal == null) throw new ArgumentNullException(nameof(goal));
 
-            return this.ExecuteCore(from, goal, new StepComparer<TKey, TStep>(Comparer<TKey>.Default, this.preference));
+            return this.ExecuteCore(from, goal, new DiscreteHeuristicComparer<TKey, TStep>(Comparer<TKey>.Default, this.preference));
         }
         
         public TStep Execute(TStep from, TStep goal, IComparer<TKey> comparer)
@@ -96,7 +96,7 @@ namespace AlgorithmForce.HeuristicSuite
             if (from == null) throw new ArgumentNullException(nameof(from));
             if (goal == null) throw new ArgumentNullException(nameof(goal));
 
-            return this.ExecuteCore(from, goal, new StepComparer<TKey, TStep>(comparer, this.preference));
+            return this.ExecuteCore(from, goal, new DiscreteHeuristicComparer<TKey, TStep>(comparer, this.preference));
         }
 
         public TStep Execute(TStep from, TStep goal, Func<TKey, double> estimation)
