@@ -18,17 +18,24 @@ The implementation is fully object-oriented and takes advantages of built-in .NE
 
 In order to apply the algorithm to puzzle, following implementations are needed:
 
-1. **The type of step in the puzzle.** The type will be required to implement [IStep(TKey)](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/IStep.cs) interface where `Key` is the property referred by the engine to check the equality between two.
+1. **Step** The type will be required to implement [IStep(TKey)](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/IStep.cs) interface where `Key` is the property referred by the engine to check the equality between two.
 
-2. **The method to compare steps.** Steps are compared to each other by `Key` property to determine which has better score. The comparison can be done by implementing [IComparable(TKey)](https://msdn.microsoft.com/en-us/library/4d7sx9hd.aspx) or providing [IComparer(TKey)](https://msdn.microsoft.com/en-us/library/8ehhxeaf.aspx) instance.
+2. **Step Comparison** Steps are compared to each other mainly based on `Key` property to determine which has better score. The comparison can be done by implementing [IComparable(TKey)](https://msdn.microsoft.com/en-us/library/4d7sx9hd.aspx) or providing [IComparer(TKey)](https://msdn.microsoft.com/en-us/library/8ehhxeaf.aspx) instance.
 
-3. **The method to get next steps from current step.** Next step information can be given by implementing `INextStepFactory(TKey, TStep)` interface, or providing `NextStepFactory` delegate.
+3. **The Available Steps from Current Step** Next step information can be given by implementing `INextStepFactory(TKey, TStep)` interface, or providing `NextStepFactory` delegate.
 
 After which, the algorithm can be run by invoking `Execute` method with `from` and `goal` steps as parameters. If the solution exists, each of steps can be obtained by calling `Enumerate` method. Steps can be `Reverse`d before the enumeration starts.
 
+### Heuristic Comparer and Discrete Heuristic Comparer 
+
+The project provides `HeuristicComparer` and `DiscreteHeuristicComparer` for different step comparison scenarios.
+
+* If the `Key` property can be directly compared to each other without explicit _h(n)_ function, then by default, `DiscreteHeuristicComparer` will be used for faster step comparison.  
+* If _h(n)_ function is explicitly needed in order to compare each of steps, the `HeuristicComparer` will be used to perform traditional estimation _f(n) = g(n) + h(n)_. 
+
 ### Heuristic Function Preference
 
-The `HeuristicFunctionPreference` enumeration enable users to change the balance of function _f(n) = g(n) + h(n)_. When two steps are evaluated same score, the enumeration decides which function, _g(n)_ or _h(n)_, has higher priority. The changed balance can affect the behavior of entire algorithm.
+The `HeuristicFunctionPreference` enumeration enable users to change the balance of estimation _f(n) = g(n) + h(n)_. When two steps are evaluated same score, the enumeration decides which function, _g(n)_ or _h(n)_, will be considered first. The changed balance can affect the behavior of heuristic algorithm.
 
 ### Examples
 
