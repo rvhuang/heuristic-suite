@@ -18,9 +18,14 @@ The implementation is fully object-oriented and takes advantages of built-in .NE
 
 In order to apply the algorithm to puzzle, following implementations are needed:
 
-1. **Step** The type will be required to implement [IStep(TKey)](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/IStep.cs) interface where `Key` is the property referred by the engine to check the equality between two.
+1. **Step Definition** The type that defines step of the puzzle will be required to implement [IStep(TKey)](https://github.com/rvhuang/heuristic-suite/blob/master/AlgorithmForce.HeuristicSuite/IStep.cs) interface. The `Key` property serves two purposes:
+    * To test whether two steps are equivalent. For example: same position on the board.
+    * To compare two steps to determine which has better score. For example: the distance between position A and goal, and the distance between position B and goal, the closer one is scored better.
 
-2. **Step Comparison** Steps are compared to each other mainly based on `Key` property to determine which has better score. The comparison can be done by implementing [IComparable(TKey)](https://msdn.microsoft.com/en-us/library/4d7sx9hd.aspx) or providing [IComparer(TKey)](https://msdn.microsoft.com/en-us/library/8ehhxeaf.aspx) instance.
+2. **Step Comparison** Steps are compared to each other based on `Key` property to determine which has better score. The comparison can be done in one of following ways: 
+    * The [IComparable(TKey)](https://msdn.microsoft.com/en-us/library/4d7sx9hd.aspx) implementation.
+    * A customized [IComparer(TKey)](https://msdn.microsoft.com/en-us/library/8ehhxeaf.aspx) instance.
+    * The explicitly given _h(n)_ function where parameter _n_ is the `Key`.
 
 3. **The Available Steps from Current Step** Next step information can be given by implementing `INextStepFactory(TKey, TStep)` interface, or providing `NextStepFactory` delegate.
 
@@ -30,7 +35,7 @@ After which, the algorithm can be run by invoking `Execute` method with `from` a
 
 The project provides `HeuristicComparer` and `DiscreteHeuristicComparer` for different step comparison scenarios.
 
-* If the `Key` property can be directly compared to each other without explicit _h(n)_ function, then by default, `DiscreteHeuristicComparer` will be used for faster step comparison.  
+* If the `Key` property can be directly compared to each other without explicit _h(n)_ function, by default, `DiscreteHeuristicComparer` will be used for faster step comparison.  
 * If _h(n)_ function is explicitly needed in order to compare each of steps, the `HeuristicComparer` will be used to perform traditional estimation _f(n) = g(n) + h(n)_. 
 
 ### Heuristic Function Preference
