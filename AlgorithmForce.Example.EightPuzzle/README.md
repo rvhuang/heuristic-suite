@@ -126,7 +126,7 @@ Now we can execute the engine and enumerate each step of the solution.
 var comparer = new BoardStateComparer(goal.Positions);
 var aStar = new AStar<BoardState>();
 
-foreach (var step in aStar.Execute(initial, goal, comparer).Reverse().Enumerate())
+foreach (var step in aStar.FindSolution(initial, goal, comparer).Reverse().Enumerate())
 {
     Console.WriteLine("Step {0}:", step.Depth);
     // TODO: Print the board detail

@@ -71,7 +71,7 @@ namespace AlgorithmForce.Example.EightPuzzle
 
                 Console.WriteLine();
                 
-                foreach (var step in engine.Execute(initial, goal, new BoardStateComparer(goal.Positions)).Reverse().Enumerate())
+                foreach (var step in engine.FindSolution(initial, goal, new BoardStateComparer(goal.Positions)).Reverse().Enumerate())
                 {
                     Console.WriteLine("Step {0}:", step.Depth);
                     Console.WriteLine(step);

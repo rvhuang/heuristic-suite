@@ -52,7 +52,7 @@ namespace AlgorithmForce.Example.CoinsFlipping
             engine.EqualityComparer = new SequenceEqualityComparer<bool>();
             engine.NextStepsFactory = GetNextSteps;
 
-            var solution = engine.Execute(init, goal, new PuzzleStateComparer()).Reverse();
+            var solution = engine.FindSolution(init, goal, new PuzzleStateComparer()).Reverse();
             var prev = default(IStep<bool[]>);
 
             foreach (var step in solution.Enumerate())

@@ -83,15 +83,12 @@ namespace AlgorithmForce.HeuristicSuite
 
         #region Methods
 
-        public TStep Execute(TStep from, TStep goal)
+        public TStep FindSolution(TStep from, TStep goal)
         {
-            if (from == null) throw new ArgumentNullException(nameof(from));
-            if (goal == null) throw new ArgumentNullException(nameof(goal));
-
-            return this.ExecuteCore(from, goal, new DiscreteHeuristicComparer<TKey, TStep>(Comparer<TKey>.Default, this.preference));
+            return this.FindSolution(from, goal, Comparer<TKey>.Default);
         }
         
-        public TStep Execute(TStep from, TStep goal, IComparer<TKey> comparer)
+        public TStep FindSolution(TStep from, TStep goal, IComparer<TKey> comparer)
         {
             if (from == null) throw new ArgumentNullException(nameof(from));
             if (goal == null) throw new ArgumentNullException(nameof(goal));
@@ -99,7 +96,7 @@ namespace AlgorithmForce.HeuristicSuite
             return this.ExecuteCore(from, goal, new DiscreteHeuristicComparer<TKey, TStep>(comparer, this.preference));
         }
 
-        public TStep Execute(TStep from, TStep goal, Func<TKey, double> estimation)
+        public TStep FindSolution(TStep from, TStep goal, Func<TKey, double> estimation)
         {
             if (from == null) throw new ArgumentNullException(nameof(from));
             if (goal == null) throw new ArgumentNullException(nameof(goal));
@@ -107,7 +104,7 @@ namespace AlgorithmForce.HeuristicSuite
             return this.ExecuteCore(from, goal, new HeuristicComparer<TKey, TStep>(estimation, this.preference));
         }
 
-        public TStep Execute(TStep from, TStep goal, Func<TKey, TKey, double> estimationFromGoal)
+        public TStep FindSolution(TStep from, TStep goal, Func<TKey, TKey, double> estimationFromGoal)
         {
             if (from == null) throw new ArgumentNullException(nameof(from));
             if (goal == null) throw new ArgumentNullException(nameof(goal));

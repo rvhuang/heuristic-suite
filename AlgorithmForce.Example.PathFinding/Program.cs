@@ -80,7 +80,7 @@ namespace AlgorithmForce.Example.PathFinding
                 var goal = new Step(goalPos, border, stepUnit);
 
                 // Get result and draw the map! 
-                var path = engine.Execute(from, goal, getDistance).Reverse().Enumerate().ToArray();
+                var path = engine.FindSolution(from, goal, getDistance).Reverse().Enumerate().ToArray();
 
                 Console.WriteLine();
 

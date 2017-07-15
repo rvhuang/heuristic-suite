@@ -27,9 +27,9 @@ In order to apply the algorithm to puzzle, following implementations are needed:
     * A customized [IComparer(TKey)](https://msdn.microsoft.com/en-us/library/8ehhxeaf.aspx) instance.
     * The explicitly given _h(n)_ function where parameter _n_ is the `Key`.
 
-3. **The Available Steps from Current Step** Next step information can be given by implementing `INextStepFactory(TKey, TStep)` interface, or providing `NextStepFactory` delegate.
+3. **The Available Steps from Current Step** Next step information can be provided by implementing `INextStepFactory(TKey, TStep)` interface, or providing `NextStepFactory` delegate.
 
-After which, the algorithm can be run by invoking `Execute` method with `from` and `goal` steps as parameters. If the solution exists, each of steps can be obtained by calling `Enumerate` method. Steps can be `Reverse`d before the enumeration starts.
+After which, the algorithm can be run by invoking `FindSolution` method with `from` and `goal` steps as parameters. If the solution exists, each of steps can be obtained by calling `Enumerate` method. Steps can be `Reverse`d before the enumeration starts.
 
 ### Heuristic Comparer and Discrete Heuristic Comparer 
 
