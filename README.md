@@ -1,5 +1,9 @@
 # Heuristic Suite
 
+### Important Note
+
+The project is no longer under maintenance. Please visit [LINQ to A\*](https://github.com/rvhuang/linq-to-astar) for latest version.
+
 ### Overview
 
 **Heuristic Suite** is an experimental implementation of a series of heuristic algorithms in generic programming. The project is aimed to provide an infrastructure that can be applied to any puzzle - as long as the puzzle can be resolved with the algorithm.
